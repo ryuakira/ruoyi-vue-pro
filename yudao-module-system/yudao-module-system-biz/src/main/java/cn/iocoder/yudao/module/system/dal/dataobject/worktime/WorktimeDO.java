@@ -1,0 +1,41 @@
+package cn.iocoder.yudao.module.system.dal.dataobject.worktime;
+
+import lombok.*;
+import java.util.*;
+import com.baomidou.mybatisplus.annotation.*;
+import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
+
+/**
+ * 勤怠 DO
+ *
+ * @author 劉
+ */
+@TableName("system_tecreas_worktime")
+@KeySequence("system_tecreas_worktime_seq") // 用于 Oracle、PostgreSQL、Kingbase、DB2、H2 数据库的主键自增。如果是 MySQL 等数据库，可不写。
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class WorktimeDO extends BaseDO {
+
+    /**
+     * 勤怠番号
+     */
+    @TableId
+    private Long id;
+    /**
+     * 社員番号
+     */
+    private Long empolyeeId;
+    /**
+     * 出勤年月
+     */
+    private String workingyearmonth;
+    /**
+     * 稼働時間
+     */
+    private Long workingtime;
+
+}

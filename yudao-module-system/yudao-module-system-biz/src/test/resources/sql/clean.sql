@@ -27,3 +27,5 @@ DELETE FROM "system_oauth2_refresh_token";
 DELETE FROM "system_oauth2_code";
 DELETE FROM "system_customer";
 DELETE FROM "system_company";
+DELETE FROM "system_tecreas_employee";
+DELETE FROM "system_tecreas_worktime";

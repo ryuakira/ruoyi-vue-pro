@@ -148,4 +148,9 @@ public interface ErrorCodeConstants {
     // ========== 会社 1002010002 ==========
     ErrorCode COMPANY_NOT_EXISTS = new ErrorCode(1002010002, "会社不存在");
 
+
+    // ========== テクリアス社員 授权 1002022000 =========
+    ErrorCode EMPLOYEE_NOT_EXISTS = new ErrorCode(2004004002, "社員不存在");
+    ErrorCode WORKTIME_NOT_EXISTS = new ErrorCode(2004004003, "勤怠不存在");
+
 }

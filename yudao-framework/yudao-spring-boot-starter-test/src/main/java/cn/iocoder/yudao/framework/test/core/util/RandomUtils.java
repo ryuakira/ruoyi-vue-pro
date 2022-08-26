@@ -40,9 +40,7 @@ public class RandomUtils {
         // Integer
         PODAM_FACTORY.getStrategy().addOrReplaceTypeManufacturer(Integer.class, (dataProviderStrategy, attributeMetadata, map) -> {
             // 如果是 status 的字段，返回 0 或 1
-            if (attributeMetadata.getAttributeName().equals("status")) {
-                return RandomUtil.randomEle(CommonStatusEnum.values()).getStatus();
-            }
+
             // 如果是 type、status 结尾的字段，返回 tinyint 范围
             if (StrUtil.endWithAnyIgnoreCase(attributeMetadata.getAttributeName(),
                     "type", "status", "category", "scope")) {
