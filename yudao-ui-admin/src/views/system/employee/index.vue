@@ -14,7 +14,8 @@
       </el-form-item>
       <el-form-item label="社員性别" prop="sex">
         <el-select v-model="queryParams.sex" placeholder="请选择社員性别" clearable size="small">
-          <el-option label="请选择字典生成" value="" />
+          <el-option v-for="dict in this.getDictDatas(DICT_TYPE.SYSTEM_USER_SEX)"
+               :key="dict.value" :label="dict.label" :value="dict.value"/>
         </el-select>
       </el-form-item>
       <el-form-item label="年齢" prop="age">
@@ -96,9 +97,10 @@
           <el-input v-model="form.avatar" placeholder="请输入画像" />
         </el-form-item>
         <el-form-item label="社員性别" prop="sex">
-          <el-radio-group v-model="form.sex">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
+        <el-select v-model="queryParams.sex" placeholder="请选择社員性别" clearable size="small">
+          <el-option v-for="dict in this.getDictDatas(DICT_TYPE.SYSTEM_USER_SEX)"
+               :key="dict.value" :label="dict.label" :value="dict.value"/>
+        </el-select>
         </el-form-item>
         <el-form-item label="年齢" prop="age">
           <el-input v-model="form.age" placeholder="请输入年齢" />
