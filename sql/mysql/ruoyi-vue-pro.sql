@@ -2649,4 +2649,75 @@ INSERT INTO `system_users` (`id`, `username`, `password`, `nickname`, `remark`, 
 INSERT INTO `system_users` (`id`, `username`, `password`, `nickname`, `remark`, `dept_id`, `post_ids`, `email`, `mobile`, `sex`, `avatar`, `status`, `login_ip`, `login_date`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (116, '15601691302', '$2a$10$L5C4S0U6adBWMvFv1Wwl4.DI/NwYS3WIfLj5Q.Naqr5II8CmqsDZ6', '小豆', NULL, NULL, NULL, '', '', 0, '', 0, '', NULL, '1', '2022-05-17 10:07:10', '1', '2022-05-17 10:07:10', b'0', 124);
 COMMIT;
 
+-- ----------------------------
+-- Table structure for system_tecreas_employee
+-- ----------------------------
+DROP TABLE IF EXISTS `system_tecreas_employee`;
+CREATE TABLE `system_tecreas_employee`  (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '社員番号',
+    `familyname` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '家族名',
+    `givenname` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '名前',
+    `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '画像',
+    `sex` tinyint NOT NULL COMMENT '社員性别',
+    `age` tinyint NOT NULL COMMENT '年齢',
+    `status` tinyint NULL COMMENT '就職状態',
+    `mobile` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '携帯番号',
+    `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT 'ログインパスワード',
+    `resume` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '最新履歴',
+    `dept_id` bigint NULL COMMENT '部門番号',
+    `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '新規者',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '新規日付',
+    `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新時間',
+    `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '削除フラグ',
+    `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `uk_mobile`(`mobile` ASC) USING BTREE COMMENT '携帯番号'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '社員';
+
+-- ----------------------------
+-- Table structure for system_tecreas_employee
+-- ----------------------------
+DROP TABLE IF EXISTS `system_tecreas_employee`;
+CREATE TABLE `system_tecreas_employee`  (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '社員番号',
+    `familyname` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '家族名',
+    `givenname` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '名前',
+    `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '画像',
+    `sex` tinyint NOT NULL COMMENT '社員性别',
+    `age` tinyint NOT NULL COMMENT '年齢',
+    `status` tinyint NULL COMMENT '就職状態',
+    `mobile` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '携帯番号',
+    `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT 'ログインパスワード',
+    `resume` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '最新履歴',
+    `dept_id` bigint NULL COMMENT '部門番号',
+    `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '新規者',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '新規日付',
+    `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新時間',
+    `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '削除フラグ',
+    `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `uk_mobile`(`mobile` ASC) USING BTREE COMMENT '携帯番号'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '社員';
+
+-- ----------------------------
+-- Table structure for system_tecreas_worktime
+-- ----------------------------
+DROP TABLE IF EXISTS `system_tecreas_worktime`;
+CREATE TABLE `system_tecreas_worktime`  (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '勤怠番号',
+    `empolyee_id` bigint NOT NULL COMMENT '社員番号',
+    `workingyearmonth` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '出勤年月',
+    `workingtime` int NULL COMMENT '稼働時間',
+    `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '新規者',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '新規日付',
+    `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新時間',
+    `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '削除フラグ',
+    `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '勤怠ID',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `uk_work`(`empolyee_id`,`workingyearmonth` ASC) USING BTREE COMMENT '社員番号、出勤年月'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '勤怠';
+
 SET FOREIGN_KEY_CHECKS = 1;

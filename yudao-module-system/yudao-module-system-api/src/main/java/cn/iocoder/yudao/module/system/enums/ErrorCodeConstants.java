@@ -142,4 +142,9 @@ public interface ErrorCodeConstants {
     ErrorCode OAUTH2_CODE_NOT_EXISTS = new ErrorCode(1002022000, "code 不存在");
     ErrorCode OAUTH2_CODE_EXPIRE = new ErrorCode(1002022000, "code 已过期");
 
+
+    // ========== テクリアス社員 授权 1002022000 =========
+    ErrorCode EMPLOYEE_NOT_EXISTS = new ErrorCode(2004004002, "社員不存在");
+    ErrorCode WORKTIME_NOT_EXISTS = new ErrorCode(2004004003, "勤怠不存在");
+
 }

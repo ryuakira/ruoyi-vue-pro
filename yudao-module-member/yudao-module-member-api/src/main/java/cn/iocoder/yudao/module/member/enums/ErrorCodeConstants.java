@@ -23,5 +23,7 @@ public interface ErrorCodeConstants {
     // ========== 用户收件地址 1004004000 ==========
     ErrorCode ADDRESS_NOT_EXISTS = new ErrorCode(1004004000, "用户收件地址不存在");
     ErrorCode ADDRESS_FORBIDDEN = new ErrorCode(1004004001, "没有该操作权限");
+    // ========== 社員 TODO 补充编号 ==========
+    ErrorCode EMPLOYEE_NOT_EXISTS = new ErrorCode(2004004002, "社員不存在");
 
 }
