@@ -142,4 +142,10 @@ public interface ErrorCodeConstants {
     ErrorCode OAUTH2_CODE_NOT_EXISTS = new ErrorCode(1002022000, "code 不存在");
     ErrorCode OAUTH2_CODE_EXPIRE = new ErrorCode(1002022000, "code 已过期");
 
+    // ========== 顧客 1002010001 ==========
+    ErrorCode CUSTOMER_NOT_EXISTS = new ErrorCode(1002010001, "顧客不存在");
+
+    // ========== 会社 1002010002 ==========
+    ErrorCode COMPANY_NOT_EXISTS = new ErrorCode(1002010002, "会社不存在");
+
 }

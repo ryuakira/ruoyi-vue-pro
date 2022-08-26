@@ -24,6 +24,8 @@ export const DICT_TYPE = {
   SYSTEM_SMS_RECEIVE_STATUS: 'system_sms_receive_status',
   SYSTEM_ERROR_CODE_TYPE: 'system_error_code_type',
   SYSTEM_OAUTH2_GRANT_TYPE: 'system_oauth2_grant_type',
+  SYSTEM_BUSINESS_FLAG: 'system_business_flag', // 取引关系
+  SYSTEM_CURRENCY: 'system_currency', // 货币种类
 
   // ========== INFRA 模块 ==========
   INFRA_BOOLEAN_STRING: 'infra_boolean_string',
