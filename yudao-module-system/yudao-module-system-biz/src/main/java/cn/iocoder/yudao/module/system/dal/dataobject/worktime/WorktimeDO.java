@@ -28,14 +28,14 @@ public class WorktimeDO extends BaseDO {
     /**
      * 社員番号
      */
-    private Long empolyeeId;
+    private String employeeId;
     /**
      * 出勤年月
      */
-    private String workingyearmonth;
+    private String workingMonth;
     /**
      * 稼働時間
      */
-    private Long workingtime;
+    private Integer workingtimes;
 
 }

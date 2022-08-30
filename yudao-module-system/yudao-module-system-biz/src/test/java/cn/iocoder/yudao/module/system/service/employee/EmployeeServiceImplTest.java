@@ -108,42 +108,67 @@ public class EmployeeServiceImplTest extends BaseDbUnitTest {
     public void testGetEmployeePage() {
        // mock 数据
        EmployeeDO dbEmployee = randomPojo(EmployeeDO.class, o -> { // 等会查询到
-           o.setId(null);
-           o.setFamilyname(null);
-           o.setGivenname(null);
+           o.setEmployeeId(null);
+           o.setEmployeeName(null);
+           o.setEmployeeNameKana(null);
            o.setSex(null);
-           o.setAge(null);
-           o.setStatus(null);
+           o.setBirthday(null);
+           o.setResideceCardId(null);
+           o.setMynumberCardId(null);
+           o.setEmplyCntrctNumbr(null);
            o.setMobile(null);
+           o.setPostcode(null);
+           o.setAddress(null);
            o.setDeptId(null);
+           o.setHireDate(null);
+           o.setStatus(null);
        });
        employeeMapper.insert(dbEmployee);
-       // 测试 id 不匹配
-       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setId(null)));
-       // 测试 familyname 不匹配
-       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setFamilyname(null)));
-       // 测试 givenname 不匹配
-       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setGivenname(null)));
+       // 测试 employeeId 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setEmployeeId(null)));
+       // 测试 employeeName 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setEmployeeName(null)));
+       // 测试 employeeNameKana 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setEmployeeNameKana(null)));
        // 测试 sex 不匹配
        employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setSex(null)));
-       // 测试 age 不匹配
-       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setAge(null)));
-       // 测试 status 不匹配
-       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setStatus(null)));
+       // 测试 birthday 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setBirthday(null)));
+       // 测试 resideceCardId 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setResideceCardId(null)));
+       // 测试 mynumberCardId 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setMynumberCardId(null)));
+       // 测试 emplyCntrctNumbr 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setEmplyCntrctNumbr(null)));
        // 测试 mobile 不匹配
        employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setMobile(null)));
+       // 测试 postcode 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setPostcode(null)));
+       // 测试 address 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setAddress(null)));
        // 测试 deptId 不匹配
        employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setDeptId(null)));
+       // 测试 hireDate 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setHireDate(null)));
+       // 测试 status 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setStatus(null)));
        // 准备参数
        EmployeePageReqVO reqVO = new EmployeePageReqVO();
-       reqVO.setId(null);
-       reqVO.setFamilyname(null);
-       reqVO.setGivenname(null);
+       reqVO.setEmployeeId(null);
+       reqVO.setEmployeeName(null);
+       reqVO.setEmployeeNameKana(null);
        reqVO.setSex(null);
-       reqVO.setAge(null);
-       reqVO.setStatus(null);
+       reqVO.setBirthday(null);
+       reqVO.setResideceCardId(null);
+       reqVO.setMynumberCardId(null);
+       reqVO.setEmplyCntrctNumbr(null);
        reqVO.setMobile(null);
+       reqVO.setPostcode(null);
+       reqVO.setAddress(null);
        reqVO.setDeptId(null);
+       reqVO.setBeginHireDate(null);
+       reqVO.setEndHireDate(null);
+       reqVO.setStatus(null);
 
        // 调用
        PageResult<EmployeeDO> pageResult = employeeService.getEmployeePage(reqVO);
@@ -158,42 +183,67 @@ public class EmployeeServiceImplTest extends BaseDbUnitTest {
     public void testGetEmployeeList() {
        // mock 数据
        EmployeeDO dbEmployee = randomPojo(EmployeeDO.class, o -> { // 等会查询到
-           o.setId(null);
-           o.setFamilyname(null);
-           o.setGivenname(null);
+           o.setEmployeeId(null);
+           o.setEmployeeName(null);
+           o.setEmployeeNameKana(null);
            o.setSex(null);
-           o.setAge(null);
-           o.setStatus(null);
+           o.setBirthday(null);
+           o.setResideceCardId(null);
+           o.setMynumberCardId(null);
+           o.setEmplyCntrctNumbr(null);
            o.setMobile(null);
+           o.setPostcode(null);
+           o.setAddress(null);
            o.setDeptId(null);
+           o.setHireDate(null);
+           o.setStatus(null);
        });
        employeeMapper.insert(dbEmployee);
-       // 测试 id 不匹配
-       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setId(null)));
-       // 测试 familyname 不匹配
-       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setFamilyname(null)));
-       // 测试 givenname 不匹配
-       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setGivenname(null)));
+       // 测试 employeeId 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setEmployeeId(null)));
+       // 测试 employeeName 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setEmployeeName(null)));
+       // 测试 employeeNameKana 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setEmployeeNameKana(null)));
        // 测试 sex 不匹配
        employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setSex(null)));
-       // 测试 age 不匹配
-       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setAge(null)));
-       // 测试 status 不匹配
-       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setStatus(null)));
+       // 测试 birthday 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setBirthday(null)));
+       // 测试 resideceCardId 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setResideceCardId(null)));
+       // 测试 mynumberCardId 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setMynumberCardId(null)));
+       // 测试 emplyCntrctNumbr 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setEmplyCntrctNumbr(null)));
        // 测试 mobile 不匹配
        employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setMobile(null)));
+       // 测试 postcode 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setPostcode(null)));
+       // 测试 address 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setAddress(null)));
        // 测试 deptId 不匹配
        employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setDeptId(null)));
+       // 测试 hireDate 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setHireDate(null)));
+       // 测试 status 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setStatus(null)));
        // 准备参数
        EmployeeExportReqVO reqVO = new EmployeeExportReqVO();
-       reqVO.setId(null);
-       reqVO.setFamilyname(null);
-       reqVO.setGivenname(null);
+       reqVO.setEmployeeId(null);
+       reqVO.setEmployeeName(null);
+       reqVO.setEmployeeNameKana(null);
        reqVO.setSex(null);
-       reqVO.setAge(null);
-       reqVO.setStatus(null);
+       reqVO.setBirthday(null);
+       reqVO.setResideceCardId(null);
+       reqVO.setMynumberCardId(null);
+       reqVO.setEmplyCntrctNumbr(null);
        reqVO.setMobile(null);
+       reqVO.setPostcode(null);
+       reqVO.setAddress(null);
        reqVO.setDeptId(null);
+       reqVO.setBeginHireDate(null);
+       reqVO.setEndHireDate(null);
+       reqVO.setStatus(null);
 
        // 调用
        List<EmployeeDO> list = employeeService.getEmployeeList(reqVO);

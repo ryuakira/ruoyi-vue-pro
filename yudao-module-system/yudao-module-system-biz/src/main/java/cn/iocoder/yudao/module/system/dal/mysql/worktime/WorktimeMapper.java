@@ -19,17 +19,17 @@ public interface WorktimeMapper extends BaseMapperX<WorktimeDO> {
 
     default PageResult<WorktimeDO> selectPage(WorktimePageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<WorktimeDO>()
-                .eqIfPresent(WorktimeDO::getEmpolyeeId, reqVO.getEmpolyeeId())
-                .eqIfPresent(WorktimeDO::getWorkingyearmonth, reqVO.getWorkingyearmonth())
-                .betweenIfPresent(WorktimeDO::getWorkingtime, reqVO.getBeginWorkingtime(), reqVO.getEndWorkingtime())
+                .eqIfPresent(WorktimeDO::getEmployeeId, reqVO.getEmployeeId())
+                .eqIfPresent(WorktimeDO::getWorkingMonth, reqVO.getWorkingMonth())
+                .eqIfPresent(WorktimeDO::getWorkingtimes, reqVO.getWorkingtimes())
                 .orderByDesc(WorktimeDO::getId));
     }
 
     default List<WorktimeDO> selectList(WorktimeExportReqVO reqVO) {
         return selectList(new LambdaQueryWrapperX<WorktimeDO>()
-                .eqIfPresent(WorktimeDO::getEmpolyeeId, reqVO.getEmpolyeeId())
-                .eqIfPresent(WorktimeDO::getWorkingyearmonth, reqVO.getWorkingyearmonth())
-                .betweenIfPresent(WorktimeDO::getWorkingtime, reqVO.getBeginWorkingtime(), reqVO.getEndWorkingtime())
+                .eqIfPresent(WorktimeDO::getEmployeeId, reqVO.getEmployeeId())
+                .eqIfPresent(WorktimeDO::getWorkingMonth, reqVO.getWorkingMonth())
+                .eqIfPresent(WorktimeDO::getWorkingtimes, reqVO.getWorkingtimes())
                 .orderByDesc(WorktimeDO::getId));
     }
 

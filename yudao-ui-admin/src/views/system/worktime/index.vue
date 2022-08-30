@@ -3,14 +3,34 @@
 
     <!-- 搜索工作栏 -->
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="社員番号" prop="empolyeeId">
-        <el-input v-model="queryParams.empolyeeId" placeholder="请输入社員番号" clearable @keyup.enter.native="handleQuery"/>
+      <el-form-item label="社員名" prop="employeeName">
+        <el-select v-model="queryParams.employeeId"
+                   placeholder="请选择社員名"
+                   clearable
+                   filterable
+                   @blur="selectBlur"
+                   @clear="selectClear"
+                   @change="selectedChange"
+                   size="small">
+<!--        <el-select v-model="value"-->
+<!--                   placeholder="请选择社員番号"-->
+<!--                   clearable-->
+<!--                   filterable-->
+<!--                   @blur="selectBlur"-->
+<!--                   @clear="selectClear"-->
+<!--                   @change="selectedChange"-->
+<!--                   size="small">-->
+<!--        <el-select v-model="queryParams.employeeId" placeholder="请选择社員番号" clearable size="small">-->
+<!--          <el-option label="请选择字典生成" value="" />-->
+<!--          <Option v-for="item in employeeList": value="item.value" :key="item.value">{{item.label}}</Option>-->
+          <Option v-for="(item,index) in employeeList"
+                  :value="item.value"
+                  :key="index"
+                  :label="item.label"/>
+        </el-select>
       </el-form-item>
-      <el-form-item label="出勤年月" prop="workingyearmonth">
-        <el-date-picker clearable v-model="queryParams.workingyearmonth" type="date" value-format="yyyy-MM-dd" placeholder="选择出勤年月" />
-      </el-form-item>
-      <el-form-item label="稼働時間" prop="workingtime">
-        <el-input v-model="queryParams.workingtime" placeholder="请输入稼働時間" clearable @keyup.enter.native="handleQuery"/>
+      <el-form-item label="出勤年月" prop="workingMonth">
+        <el-date-picker clearable v-model="queryParams.workingMonth" type="date" value-format="yyyy-MM-dd" placeholder="选择出勤年月" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
@@ -34,9 +54,13 @@
     <!-- 列表 -->
     <el-table v-loading="loading" :data="list">
       <el-table-column label="勤怠番号" align="center" prop="id" />
-      <el-table-column label="社員番号" align="center" prop="empolyeeId" />
-      <el-table-column label="出勤年月" align="center" prop="workingyearmonth" />
-      <el-table-column label="稼働時間" align="center" prop="workingtime" />
+      <el-table-column label="社員番号" align="center" prop="employeeId" />
+      <el-table-column label="出勤年月" align="center" prop="workingMonth" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.workingMonth) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="稼働時間" align="center" prop="workingtimes" />
       <el-table-column label="新規日付" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -58,14 +82,33 @@
     <!-- 对话框(添加 / 修改) -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="社員番号" prop="empolyeeId">
-          <el-input v-model="form.empolyeeId" placeholder="请输入社員番号" />
+        <el-form-item label="社員番号" prop="employeeId">
+<!--          <el-select v-model="form.employeeId" placeholder="请选择社員番号">-->
+          <el-select v-model="form.employeeId"
+                     placeholder="请选择社員番号"
+                     filterable
+                     @blur="selectBlur"
+                     @change="selectedChange">
+<!--            <el-select v-model="value"-->
+<!--                       placeholder="请选择社員番号"-->
+<!--                       clearable-->
+<!--                       filterable-->
+<!--                       @blur="selectBlur"-->
+<!--                       @clear="selectClear"-->
+<!--                       @change="selectedChange"-->
+<!--                       >-->
+              <!--          <el-option label="请选择字典生成" value="" />-->
+              <Option v-for="item in employeeList"
+                      :value="item.value"
+                      :key="item.value"
+                      :label="item.label"/>
+          </el-select>
         </el-form-item>
-        <el-form-item label="出勤年月" prop="workingyearmonth">
-          <el-date-picker clearable v-model="form.workingyearmonth" type="date" value-format="timestamp" placeholder="选择出勤年月" />
+        <el-form-item label="出勤年月" prop="workingMonth">
+          <el-date-picker clearable v-model="form.workingMonth" type="date" value-format="timestamp" placeholder="选择出勤年月" />
         </el-form-item>
-        <el-form-item label="稼働時間" prop="workingtime">
-          <el-input v-model="form.workingtime" placeholder="请输入稼働時間" />
+        <el-form-item label="稼働時間" prop="workingtimes">
+          <el-input v-model="form.workingtimes" placeholder="请输入稼働時間" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -85,6 +128,20 @@ export default {
   },
   data() {
     return {
+
+      // test start ---社员姓名下拉框 test----//
+      value:'',
+      employeeList: [
+        {
+          value: 'T0000120220830',
+          label: '田中健一'
+        },
+        {
+          value: 'T0000120220830',
+          label: '田中健二'
+        }
+      ],
+      // test end -------//
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -103,15 +160,15 @@ export default {
       queryParams: {
         pageNo: 1,
         pageSize: 10,
-        empolyeeId: null,
-        workingyearmonth: null,
+        employeeId: null,
+        workingMonth: null,
+        workingtimes: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        empolyeeId: [{ required: true, message: "社員番号不能为空", trigger: "blur" }],
-        workingyearmonth: [{ required: true, message: "出勤年月不能为空", trigger: "blur" }],
+        employeeId: [{ required: true, message: "社員番号不能为空", trigger: "change" }],
       }
     };
   },
@@ -119,6 +176,23 @@ export default {
     this.getList();
   },
   methods: {
+    // test start -------//
+      selectBlur(e) {
+        if (e.target.value != '') {
+          // this.value = e.target.value + '(Others)';
+          this.value = e.target.value +'';
+          this.$forceUpdate();
+        }
+      },
+     selectClear() {
+       this.value = '';
+       this.$forceUpdate();
+     },
+     selectedChange(val) {
+       this.value = val;
+       this.$forceUpdate();
+     },
+    // test end -------//
     /** 查询列表 */
     getList() {
       this.loading = true;
@@ -140,9 +214,9 @@ export default {
     reset() {
       this.form = {
         id: undefined,
-        empolyeeId: undefined,
-        workingyearmonth: undefined,
-        workingtime: undefined,
+        employeeId: undefined,
+        workingMonth: undefined,
+        workingtimes: undefined,
       };
       this.resetForm("form");
     },
