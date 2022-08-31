@@ -52,3 +52,11 @@ export function exportEmployeeExcel(query) {
     responseType: 'blob'
   })
 }
+
+// 获取在职员工精简信息列表（用于初始化员工名称下拉框）----劉義民 手动追加代码 2022/08/30
+export function listSimpleEmployee() {
+  return request({
+    url: '/system/employee/list-all-simple',
+    method: 'get'
+  })
+}

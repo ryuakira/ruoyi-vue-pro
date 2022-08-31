@@ -7,10 +7,6 @@
         <el-select v-model="queryParams.employeeId"
                    placeholder="请选择社員名"
                    clearable
-                   filterable
-                   @blur="selectBlur"
-                   @clear="selectClear"
-                   @change="selectedChange"
                    size="small">
 <!--        <el-select v-model="value"-->
 <!--                   placeholder="请选择社員番号"-->
@@ -23,14 +19,14 @@
 <!--        <el-select v-model="queryParams.employeeId" placeholder="请选择社員番号" clearable size="small">-->
 <!--          <el-option label="请选择字典生成" value="" />-->
 <!--          <Option v-for="item in employeeList": value="item.value" :key="item.value">{{item.label}}</Option>-->
-          <Option v-for="(item,index) in employeeList"
+          <el-option v-for="item in employeeList"
                   :value="item.value"
-                  :key="index"
+                  :key="item.value"
                   :label="item.label"/>
         </el-select>
       </el-form-item>
       <el-form-item label="出勤年月" prop="workingMonth">
-        <el-date-picker clearable v-model="queryParams.workingMonth" type="date" value-format="yyyy-MM-dd" placeholder="选择出勤年月" />
+        <el-date-picker clearable v-model="queryParams.workingMonth" type="date" value-format="yyyy-MM" placeholder="选择出勤年月" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
@@ -86,9 +82,7 @@
 <!--          <el-select v-model="form.employeeId" placeholder="请选择社員番号">-->
           <el-select v-model="form.employeeId"
                      placeholder="请选择社員番号"
-                     filterable
-                     @blur="selectBlur"
-                     @change="selectedChange">
+                     clearable style="width: 100%" >
 <!--            <el-select v-model="value"-->
 <!--                       placeholder="请选择社員番号"-->
 <!--                       clearable-->
@@ -97,11 +91,10 @@
 <!--                       @clear="selectClear"-->
 <!--                       @change="selectedChange"-->
 <!--                       >-->
-              <!--          <el-option label="请选择字典生成" value="" />-->
-              <Option v-for="item in employeeList"
-                      :value="item.value"
+              <el-option v-for="item in employeeList"
                       :key="item.value"
-                      :label="item.label"/>
+                      :label="item.label"
+                      :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="出勤年月" prop="workingMonth">
@@ -121,6 +114,7 @@
 
 <script>
 import { createWorktime, updateWorktime, deleteWorktime, getWorktime, getWorktimePage, exportWorktimeExcel } from "@/api/system/worktime";
+import { listSimpleEmployee } from "@/api/system/employee";
 
 export default {
   name: "Worktime",
@@ -129,19 +123,9 @@ export default {
   data() {
     return {
 
-      // test start ---社员姓名下拉框 test----//
-      value:'',
-      employeeList: [
-        {
-          value: 'T0000120220830',
-          label: '田中健一'
-        },
-        {
-          value: 'T0000120220830',
-          label: '田中健二'
-        }
-      ],
-      // test end -------//
+      // 手动追加 2022/08/30 start ---社员姓名下拉框 ----//
+      employeeList: [],
+      // 手动追加 2022/08/30 end ----社员姓名下拉框 ----//
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -174,24 +158,31 @@ export default {
   },
   created() {
     this.getList();
+    /** 获取在职员工下拉框列表 */
+    listSimpleEmployee().then(response => {
+      this.employeeList = response.data;
+      console.log("response.data.size ================ " + this.employeeList.length);
+      console.log("response.data1 ================ " + this.employeeList[0].employeeName);
+      console.log("response.data2 ================ " + this.employeeList[1].employeeName);
+    });
   },
   methods: {
     // test start -------//
-      selectBlur(e) {
-        if (e.target.value != '') {
-          // this.value = e.target.value + '(Others)';
-          this.value = e.target.value +'';
-          this.$forceUpdate();
-        }
-      },
-     selectClear() {
-       this.value = '';
-       this.$forceUpdate();
-     },
-     selectedChange(val) {
-       this.value = val;
-       this.$forceUpdate();
-     },
+    // selectBlur(e) {
+    //     if (e.target.value != '') {
+    //       // this.value = e.target.value + '(Others)';
+    //       this.value = e.target.value +'';
+    //       this.$forceUpdate();
+    //     }
+    //   },
+    // selectClear() {
+    //    this.value = '';
+    //    this.$forceUpdate();
+    //  },
+    // selectedChange(val) {
+    //    this.value = val;
+    //    this.$forceUpdate();
+    //  },
     // test end -------//
     /** 查询列表 */
     getList() {

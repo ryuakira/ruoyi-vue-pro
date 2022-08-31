@@ -26,6 +26,7 @@ export const DICT_TYPE = {
   SYSTEM_OAUTH2_GRANT_TYPE: 'system_oauth2_grant_type',
   SYSTEM_BUSINESS_FLAG: 'system_business_flag', // 取引关系
   SYSTEM_CURRENCY: 'system_currency', // 货币种类
+  SYSTEM_EMPLOYEE_STATUS: 'system_employee_status', // 员工在职状态
 
   // ========== INFRA 模块 ==========
   INFRA_BOOLEAN_STRING: 'infra_boolean_string',

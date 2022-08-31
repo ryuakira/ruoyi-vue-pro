@@ -48,7 +48,10 @@
       </el-form-item>
       <el-form-item label="就職状態" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择就職状態" clearable size="small">
-          <el-option label="请选择字典生成" value="" />
+          <el-select v-model="queryParams.sex" placeholder="请选择社員性别" clearable size="small">
+            <el-option v-for="dict in this.getDictDatas(DICT_TYPE.SYSTEM_EMPLOYEE_STATUS)"
+                       :key="dict.value" :label="dict.label" :value="dict.value"/>
+          </el-select>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -90,7 +93,7 @@
       <el-table-column label="住所" align="center" prop="address" />
       <el-table-column label="最新履歴" align="center" prop="resume" />
       <el-table-column label="勤怠情報" align="center" >
-        <el-button size="mini" type="text" @click="handleWorkTime(scope.row)"
+        <el-button size="mini" type="text" slot-scope="scope" @click="handleWorkTime(scope.row)"
                    v-hasPermi="['system:employee:update']">勤怠詳細
         </el-button>
       </el-table-column>
@@ -179,7 +182,8 @@
             </el-form-item>
             <el-form-item label="就職状態" prop="status">
               <el-select v-model="form.status" placeholder="请选择就職状態">
-                <el-option label="请选择字典生成" value="" />
+                <el-option v-for="dict in this.getDictDatas(DICT_TYPE.SYSTEM_EMPLOYEE_STATUS)"
+                           :key="dict.value" :label="dict.label" :value="dict.value"/>
               </el-select>
             </el-form-item>
           </el-tab-pane>
@@ -252,6 +256,7 @@ export default {
         mobile: [{ required: true, message: "携帯番号不能为空", trigger: "blur" }],
         address: [{ required: true, message: "住所不能为空", trigger: "blur" }],
         hireDate: [{ required: true, message: "入社日不能为空", trigger: "blur" }],
+        status: [{ required: true, message: "就只状态不能为空", trigger: "change" }],
       }
     };
   },
@@ -333,12 +338,13 @@ export default {
     },
     /** 跳转至勤怠管理画面 */
     handleWorkTime(row) {
-      console.log(row.employeeId + "------");
-      if (row.employeeId != '') {
-        this.$router.push({ path: "/system/worktime", query: {id: row.employeeId} });
-      } else {
-        this.$router.push({ path: "/system/worktime" });
-      }
+      // if (row.employeeId != '') {
+      //   this.$router.push({ path: "/system/worktime", query: {id: row.employeeId} });
+      // } else {
+      //   this.$router.push({ path: "/system/worktime" });
+      // }
+      // console.log(row.employeeId + "------");
+      this.$router.push({ path: "/system/worktime" });
     },
     /** 提交按钮 */
     submitForm() {
@@ -365,13 +371,14 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      const employeeName = row.employeeName;
       const id = row.id;
-      this.$modal.confirm('是否确认删除社員编号为"' + id + '"的数据项?').then(function() {
-          return deleteEmployee(id);
-        }).then(() => {
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-        }).catch(() => {});
+      this.$modal.confirm('是否确认删除社員名为"' + employeeName + '"的数据项?').then(function() {
+        return deleteEmployee(id);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("删除成功");
+      }).catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -382,13 +389,14 @@ export default {
       this.addBeginAndEndTime(params, this.dateRangeHireDate, 'hireDate');
       // 执行导出
       this.$modal.confirm('是否确认导出所有社員数据项?').then(() => {
-          this.exportLoading = true;
-          return exportEmployeeExcel(params);
-        }).then(response => {
-          this.$download.excel(response, '社員.xls');
-          this.exportLoading = false;
-        }).catch(() => {});
+        this.exportLoading = true;
+        return exportEmployeeExcel(params);
+      }).then(response => {
+        this.$download.excel(response, '社員.xls');
+        this.exportLoading = false;
+      }).catch(() => {});
     }
   }
 };
 </script>
+

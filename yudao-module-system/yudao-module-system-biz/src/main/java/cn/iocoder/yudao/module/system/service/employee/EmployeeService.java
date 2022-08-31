@@ -67,4 +67,11 @@ public interface EmployeeService {
      */
     List<EmployeeDO> getEmployeeList(EmployeeExportReqVO exportReqVO);
 
+    /**
+     * 获得在职状态的员工列表
+     *
+     * @param status 状态
+     * @return 在职状态的员工列表
+     */
+    List<EmployeeDO> getEmployeeListByStatus(Integer status);
 }

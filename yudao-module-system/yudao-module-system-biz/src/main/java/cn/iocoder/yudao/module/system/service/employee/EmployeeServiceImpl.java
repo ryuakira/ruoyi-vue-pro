@@ -79,4 +79,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeMapper.selectList(exportReqVO);
     }
 
+    @Override
+    public List<EmployeeDO> getEmployeeListByStatus(Integer status) {
+        return employeeMapper.selectListByStatus(status);
+    }
 }

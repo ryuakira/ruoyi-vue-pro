@@ -97,4 +97,12 @@ public class EmployeeController {
         ExcelUtils.write(response, "社員.xls", "数据", EmployeeExcelVO.class, datas);
     }
 
+    @GetMapping("/list-all-simple")
+    @ApiOperation(value = "获取在职状态的员工精简信息列表", notes = "只包含被开启的员工信息，主要用于前端的下拉选项")
+    public CommonResult<List<EmployeeRespVO>> getSimpleEmployeeList() {
+        // 从员工表，获取在职状态的员工信息
+        List<EmployeeDO> list = employeeService.getEmployeeListByStatus(0);
+        // 排序后，返回给前端
+        return success(EmployeeConvert.INSTANCE.convertList(list));
+    }
 }

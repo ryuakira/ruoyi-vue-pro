@@ -8,6 +8,7 @@ import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.module.system.dal.dataobject.employee.EmployeeDO;
 import org.apache.ibatis.annotations.Mapper;
 import cn.iocoder.yudao.module.system.controller.admin.employee.vo.*;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * 社員 Mapper
@@ -55,4 +56,9 @@ public interface EmployeeMapper extends BaseMapperX<EmployeeDO> {
                 .orderByDesc(EmployeeDO::getId));
     }
 
+    default List<EmployeeDO> selectListByStatus(Integer status) {
+        // 劉義民 2022/08/31 下面这两种写法都OK
+        // return selectList(new LambdaQueryWrapperX<EmployeeDO>().eqIfPresent(EmployeeDO::getStatus, status));
+        return selectList(EmployeeDO::getStatus, status);
+    }
 }
