@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.system.dal.dataobject.worktime;
 
+import cn.iocoder.yudao.module.system.dal.dataobject.employee.EmployeeDO;
 import lombok.*;
 import java.util.*;
 import com.baomidou.mybatisplus.annotation.*;
@@ -29,6 +30,13 @@ public class WorktimeDO extends BaseDO {
      * 社員番号
      */
     private String employeeId;
+
+//    /**
+//     * 社員姓名
+//     *
+//     * 关联 {@link EmployeeDO#getEmployeeName()}
+//     */
+//    private String employeeName;
     /**
      * 出勤年月
      */

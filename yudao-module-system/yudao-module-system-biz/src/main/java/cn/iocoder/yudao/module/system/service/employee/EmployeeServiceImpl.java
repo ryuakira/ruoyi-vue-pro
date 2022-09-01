@@ -68,7 +68,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<EmployeeDO> getEmployeeList(Collection<Long> ids) {
         return employeeMapper.selectBatchIds(ids);
     }
+    // 2022/09/01 劉義民　社員番号で社員名前を取得処理　追加開始
+    @Override
+    public List<EmployeeDO> getEmployeeInfoList(Collection<String> employeeIds) {
+        return employeeMapper.selectBatchIds(employeeIds);
+    }
+//    @Override
+//    public List<EmployeeDO> getEmployeeInfoList2(Map<String, EmployeeDO> colMap) {
+////        return employeeMapper.selectByMap(colMap);
+//    }
 
+
+    // 2022/09/01 劉義民　社員番号で社員名前を取得処理　追加終了
     @Override
     public PageResult<EmployeeDO> getEmployeePage(EmployeePageReqVO pageReqVO) {
         return employeeMapper.selectPage(pageReqVO);

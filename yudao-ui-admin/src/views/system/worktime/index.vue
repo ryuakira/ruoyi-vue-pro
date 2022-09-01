@@ -20,13 +20,13 @@
 <!--          <el-option label="请选择字典生成" value="" />-->
 <!--          <Option v-for="item in employeeList": value="item.value" :key="item.value">{{item.label}}</Option>-->
           <el-option v-for="item in employeeList"
-                  :value="item.value"
-                  :key="item.value"
-                  :label="item.label"/>
+                  :value="item.employeeId"
+                  :key="item.employeeId"
+                  :label="item.employeeName"/>
         </el-select>
       </el-form-item>
       <el-form-item label="出勤年月" prop="workingMonth">
-        <el-date-picker clearable v-model="queryParams.workingMonth" type="date" value-format="yyyy-MM" placeholder="选择出勤年月" />
+        <el-date-picker clearable v-model="queryParams.workingMonth" type="month" value-format="yyyy-MM" placeholder="选择出勤年月" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
@@ -51,6 +51,7 @@
     <el-table v-loading="loading" :data="list">
       <el-table-column label="勤怠番号" align="center" prop="id" />
       <el-table-column label="社員番号" align="center" prop="employeeId" />
+      <el-table-column label="社員名前" align="center" prop="employeeName" />
       <el-table-column label="出勤年月" align="center" prop="workingMonth" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.workingMonth) }}</span>
@@ -91,14 +92,14 @@
 <!--                       @clear="selectClear"-->
 <!--                       @change="selectedChange"-->
 <!--                       >-->
-              <el-option v-for="item in employeeList"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value" />
+            <el-option v-for="item in employeeList"
+                       :value="item.employeeId"
+                       :key="item.employeeId"
+                       :label="item.employeeName"/>
           </el-select>
         </el-form-item>
         <el-form-item label="出勤年月" prop="workingMonth">
-          <el-date-picker clearable v-model="form.workingMonth" type="date" value-format="timestamp" placeholder="选择出勤年月" />
+          <el-date-picker clearable v-model="form.workingMonth" type="month" placeholder="选择出勤年月" />
         </el-form-item>
         <el-form-item label="稼働時間" prop="workingtimes">
           <el-input v-model="form.workingtimes" placeholder="请输入稼働時間" />
