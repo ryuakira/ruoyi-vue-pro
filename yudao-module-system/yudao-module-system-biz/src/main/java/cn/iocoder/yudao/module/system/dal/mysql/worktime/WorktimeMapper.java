@@ -32,5 +32,4 @@ public interface WorktimeMapper extends BaseMapperX<WorktimeDO> {
                 .eqIfPresent(WorktimeDO::getWorkingtimes, reqVO.getWorkingtimes())
                 .orderByDesc(WorktimeDO::getId));
     }
-
 }

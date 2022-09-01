@@ -8,7 +8,6 @@ import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.module.system.dal.dataobject.employee.EmployeeDO;
 import org.apache.ibatis.annotations.Mapper;
 import cn.iocoder.yudao.module.system.controller.admin.employee.vo.*;
-import org.apache.ibatis.annotations.Select;
 
 /**
  * 社員 Mapper

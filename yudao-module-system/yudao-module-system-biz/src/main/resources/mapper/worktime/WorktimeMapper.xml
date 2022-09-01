@@ -8,5 +8,10 @@
         代码生成器暂时只生成 Mapper XML 文件本身，更多推荐 MybatisX 快速开发插件来生成查询。
         文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
      -->
-
+<!--    <select id="selectList2" resultType="WorktimeDO">-->
+<!--        select w.id, w.employee_id, e.employee_name, w.working_month, w.workingtimes, w.create_time-->
+<!--        from system_tecreas_worktime w-->
+<!--        left join system_tecreas_employee e-->
+<!--        on w.employee_id = e.employee_id-->
+<!--    </select>-->
 </mapper>

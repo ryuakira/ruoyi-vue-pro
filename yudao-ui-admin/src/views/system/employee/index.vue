@@ -19,7 +19,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="年月日" prop="birthday">
-        <el-date-picker clearable v-model="queryParams.birthday" type="date" value-format="yyyy-MM-dd" placeholder="选择年月日" />
+        <el-date-picker clearable v-model="queryParams.birthday" type="date" placeholder="选择年月日" />
       </el-form-item>
       <el-form-item label="在留カード番号" prop="resideceCardId">
         <el-input v-model="queryParams.resideceCardId" placeholder="请输入在留カード番号" clearable @keyup.enter.native="handleQuery"/>
@@ -43,7 +43,7 @@
         <el-input v-model="queryParams.deptId" placeholder="请输入部門番号" clearable @keyup.enter.native="handleQuery"/>
       </el-form-item>
       <el-form-item label="入社日">
-        <el-date-picker v-model="dateRangeHireDate" style="width: 240px" value-format="yyyy-MM-dd"
+        <el-date-picker v-model="dateRangeHireDate" style="width: 240px"
                         type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" />
       </el-form-item>
       <el-form-item label="就職状態" prop="status">
@@ -80,7 +80,7 @@
       <el-table-column label="姓名" align="center" prop="employeeName" />
       <el-table-column label="姓名カナ" align="center" prop="employeeNameKana" />
       <el-table-column label="性别" align="center" prop="sex" />
-      <el-table-column label="年月日" align="center" prop="birthday" width="180" formatter="yyyy-MM-dd">
+      <el-table-column label="年月日" align="center" prop="birthday" width="180" >
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.birthday) }}</span>
         </template>
@@ -97,7 +97,7 @@
                    v-hasPermi="['system:employee:update']">勤怠詳細
         </el-button>
       </el-table-column>
-      <el-table-column label="部門番号" align="center" prop="deptId" />
+      <el-table-column label="所属部門" align="center" prop="deptId" />
       <el-table-column label="入社日" align="center" prop="hireDate" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.hireDate) }}</span>
@@ -128,7 +128,7 @@
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="個人情報" name="first">
             <el-form-item label="社員番号" prop="employeeId">
-              <el-input v-model="form.employeeId" placeholder="请输入社員番号" />
+              <el-input v-model="form.employeeId" placeholder="自動採番" disabled />
             </el-form-item>
             <el-form-item label="姓名" prop="employeeName">
               <el-input v-model="form.employeeName" placeholder="请输入姓名" />
@@ -141,11 +141,12 @@
             </el-form-item>
             <el-form-item label="性别" prop="sex">
               <el-select v-model="form.sex" placeholder="请选择">
-                <el-option v-for="dict in this.getDictDatas(DICT_TYPE.SYSTEM_USER_SEX)" :key="parseInt(dict.value)" :label="dict.label" :value="parseInt(dict.value)"/>
+                <el-option v-for="dict in this.getDictDatas(DICT_TYPE.SYSTEM_USER_SEX)"
+                           :key="parseInt(dict.value)" :label="dict.label" :value="parseInt(dict.value)"/>
               </el-select>
             </el-form-item>
             <el-form-item label="年月日" prop="birthday">
-              <el-date-picker clearable v-model="form.birthday" type="date" format="yyyy-MM-dd" placeholder="选择年月日" />
+              <el-date-picker clearable v-model="form.birthday" type="date"  placeholder="选择年月日" />
             </el-form-item>
             <el-form-item label="携帯番号" prop="mobile">
               <el-input v-model="form.mobile" placeholder="请输入携帯番号" />
@@ -174,11 +175,13 @@
             <el-form-item label="最新履歴" prop="resume">
               <el-input v-model="form.resume" placeholder="请输入最新履歴" />
             </el-form-item>
-            <el-form-item label="部門番号" prop="deptId">
-              <el-input v-model="form.deptId" placeholder="请输入部門番号" />
+            <el-form-item label="所属部门" prop="deptId">
+<!--              <el-input v-model="form.deptId" placeholder="请输入部門番号" />-->
+              <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" :clearable="false"
+                          placeholder="请选择所属部门" :normalizer="normalizer"/>
             </el-form-item>
             <el-form-item label="入社日" prop="hireDate">
-              <el-date-picker clearable v-model="form.hireDate" type="date" format="yyyy-MM-dd" placeholder="选择入社日" />
+              <el-date-picker clearable v-model="form.hireDate" type="date"  placeholder="选择入社日" />
             </el-form-item>
             <el-form-item label="就職状態" prop="status">
               <el-select v-model="form.status" placeholder="请选择就職状態">
@@ -199,10 +202,12 @@
 
 <script>
 import { createEmployee, updateEmployee, deleteEmployee, getEmployee, getEmployeePage, exportEmployeeExcel } from "@/api/system/employee";
-
+import {listSimpleDepts} from "@/api/system/dept";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
   name: "Employee",
-  components: {
+  components: { Treeselect
   },
   data() {
     return {
@@ -218,6 +223,8 @@ export default {
       total: 0,
       // 社員列表
       list: [],
+      // 部门树选项
+      deptOptions: undefined,
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -245,7 +252,7 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        employeeId: [{ required: true, message: "社員番号不能为空", trigger: "blur" }],
+        // employeeId: [{ required: true, message: "社員番号不能为空", trigger: "blur" }],
         employeeName: [{ required: true, message: "姓名不能为空", trigger: "blur" }],
         employeeNameKana: [{ required: true, message: "姓名カナ不能为空", trigger: "blur" }],
         avatar: [{ required: true, message: "画像URL不能为空", trigger: "blur" }],
@@ -255,6 +262,7 @@ export default {
         resideceCardCopy: [{ required: true, message: "在留カード番号コピー不能为空", trigger: "blur" }],
         mobile: [{ required: true, message: "携帯番号不能为空", trigger: "blur" }],
         address: [{ required: true, message: "住所不能为空", trigger: "blur" }],
+        deptId: [{ required: true, message: "所属部門不能为空", trigger: "change" }],
         hireDate: [{ required: true, message: "入社日不能为空", trigger: "blur" }],
         status: [{ required: true, message: "就只状态不能为空", trigger: "change" }],
       }
@@ -262,6 +270,7 @@ export default {
   },
   created() {
     this.getList();
+    this.getTreeselect();
   },
   methods: {
     handleClick(tab, event) {
@@ -280,10 +289,29 @@ export default {
         this.loading = false;
       });
     },
+    /** 查询部门下拉树结构 */
+    getTreeselect() {
+      listSimpleDepts().then(response => {
+        // 处理 deptOptions 参数
+        this.deptOptions = [];
+        this.deptOptions.push(...this.handleTree(response.data, "id"));
+        console.log("depOptions.size = ====" + this.deptOptions.length);
+      });
+    },
     /** 取消按钮 */
     cancel() {
       this.open = false;
       this.reset();
+    },
+    // 筛选节点
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.name.indexOf(value) !== -1;
+    },
+    // 节点单击事件
+    handleNodeClick(data) {
+      this.queryParams.deptId = data.id;
+      this.getList();
     },
     /** 表单重置 */
     reset() {
@@ -395,6 +423,14 @@ export default {
         this.$download.excel(response, '社員.xls');
         this.exportLoading = false;
       }).catch(() => {});
+    },
+    // 格式化部门的下拉框
+    normalizer(node) {
+      return {
+        id: node.id,
+        label: node.name,
+        children: node.children
+      }
     }
   }
 };

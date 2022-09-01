@@ -14,6 +14,9 @@ public class WorktimePageReqVO extends PageParam {
     @ApiModelProperty(value = "社員番号")
     private String employeeId;
 
+    @ApiModelProperty(value = "社員番号")
+    private String employeeName;
+
     @ApiModelProperty(value = "出勤年月")
     private String workingMonth;
 
