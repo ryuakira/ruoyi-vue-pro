@@ -2655,7 +2655,7 @@ COMMIT;
 DROP TABLE IF EXISTS `system_tecreas_employee`;
 CREATE TABLE `system_tecreas_employee`  (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
-    `employee_id` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'T000019000101' COMMENT '社員番号',
+    `employee_num` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'T000019000101' COMMENT '社員番号',
     `employee_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '姓名',
     `employee_name_kana` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '姓名カナ',
     `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '画像URL',
@@ -2688,14 +2688,15 @@ CREATE TABLE `system_tecreas_employee`  (
 DROP TABLE IF EXISTS `system_tecreas_worktime`;
 CREATE TABLE `system_tecreas_worktime`  (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '勤怠番号',
-    `employee_id` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '社員番号',
-    `working_month` datetime NULL COMMENT '出勤年月',
+    `employee_num` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '社員番号',
+    `employee_id` bigint NULL  COMMENT '社員id主鍵',
+    `working_month` varchar(12) NULL COMMENT '出勤年月',
     `workingtimes` float NULL COMMENT '稼働時間',
     `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '新規者',
     `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '新規日付',
     `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '更新者',
     `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新時間',
-    `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '削除フラグ',
+    `deleted` bit(1) NOT NULL DEFAULT 0 COMMENT '削除フラグ',
     `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '勤怠ID',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `uk_work`(`employee_id`,`working_month` ASC) USING BTREE COMMENT '社員番号、出勤年月'

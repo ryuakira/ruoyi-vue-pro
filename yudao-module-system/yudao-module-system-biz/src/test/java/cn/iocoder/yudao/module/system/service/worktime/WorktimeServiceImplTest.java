@@ -108,22 +108,19 @@ public class WorktimeServiceImplTest extends BaseDbUnitTest {
     public void testGetWorktimePage() {
        // mock 数据
        WorktimeDO dbWorktime = randomPojo(WorktimeDO.class, o -> { // 等会查询到
-           o.setEmployeeId(null);
+           o.setEmployeeNum(null);
            o.setWorkingMonth(null);
-           o.setWorkingtimes(null);
        });
        worktimeMapper.insert(dbWorktime);
-       // 测试 employeeId 不匹配
-       worktimeMapper.insert(cloneIgnoreId(dbWorktime, o -> o.setEmployeeId(null)));
+       // 测试 employeeNum 不匹配
+       worktimeMapper.insert(cloneIgnoreId(dbWorktime, o -> o.setEmployeeNum(null)));
        // 测试 workingMonth 不匹配
        worktimeMapper.insert(cloneIgnoreId(dbWorktime, o -> o.setWorkingMonth(null)));
-       // 测试 workingtimes 不匹配
-       worktimeMapper.insert(cloneIgnoreId(dbWorktime, o -> o.setWorkingtimes(null)));
        // 准备参数
        WorktimePageReqVO reqVO = new WorktimePageReqVO();
-       reqVO.setEmployeeId(null);
-       reqVO.setWorkingMonth(null);
-       reqVO.setWorkingtimes(null);
+       reqVO.setEmployeeNum(null);
+       reqVO.setBeginWorkingMonth(null);
+       reqVO.setEndWorkingMonth(null);
 
        // 调用
        PageResult<WorktimeDO> pageResult = worktimeService.getWorktimePage(reqVO);
@@ -138,22 +135,19 @@ public class WorktimeServiceImplTest extends BaseDbUnitTest {
     public void testGetWorktimeList() {
        // mock 数据
        WorktimeDO dbWorktime = randomPojo(WorktimeDO.class, o -> { // 等会查询到
-           o.setEmployeeId(null);
+           o.setEmployeeNum(null);
            o.setWorkingMonth(null);
-           o.setWorkingtimes(null);
        });
        worktimeMapper.insert(dbWorktime);
-       // 测试 employeeId 不匹配
-       worktimeMapper.insert(cloneIgnoreId(dbWorktime, o -> o.setEmployeeId(null)));
+       // 测试 employeeNum 不匹配
+       worktimeMapper.insert(cloneIgnoreId(dbWorktime, o -> o.setEmployeeNum(null)));
        // 测试 workingMonth 不匹配
        worktimeMapper.insert(cloneIgnoreId(dbWorktime, o -> o.setWorkingMonth(null)));
-       // 测试 workingtimes 不匹配
-       worktimeMapper.insert(cloneIgnoreId(dbWorktime, o -> o.setWorkingtimes(null)));
        // 准备参数
        WorktimeExportReqVO reqVO = new WorktimeExportReqVO();
-       reqVO.setEmployeeId(null);
-       reqVO.setWorkingMonth(null);
-       reqVO.setWorkingtimes(null);
+       reqVO.setEmployeeNum(null);
+       reqVO.setBeginWorkingMonth(null);
+       reqVO.setEndWorkingMonth(null);
 
        // 调用
        List<WorktimeDO> list = worktimeService.getWorktimeList(reqVO);

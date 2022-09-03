@@ -28,7 +28,7 @@ public class EmployeeDO extends BaseDO {
     /**
      * 社員番号
      */
-    private String employeeId;
+    private String employeeNum;
     /**
      * 姓名
      */

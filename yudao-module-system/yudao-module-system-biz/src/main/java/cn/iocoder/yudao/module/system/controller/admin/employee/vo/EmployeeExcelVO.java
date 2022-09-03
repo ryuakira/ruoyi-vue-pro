@@ -18,7 +18,7 @@ public class EmployeeExcelVO {
     private Long id;
 
     @ExcelProperty("社員番号")
-    private String employeeId;
+    private String employeeNum;
 
     @ExcelProperty("姓名")
     private String employeeName;

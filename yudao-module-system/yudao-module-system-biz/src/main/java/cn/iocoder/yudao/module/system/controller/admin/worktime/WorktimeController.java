@@ -101,8 +101,8 @@ public class WorktimeController {
         // 2022/09/01 劉義民　手動追加　開始
         // 参照开发文档 https://doc.iocoder.cn/mybatis/#_6-mapper-xml "尽量避免数据库的连表（多表）查询"
         // 获得拼接需要的数据
-        Collection<String> employeeIds = convertList(pageResult.getList(), WorktimeDO::getEmployeeId);
-        Map<String, EmployeeDO> employeeMap = employeeService.getEmployeetMap(employeeIds);
+        Collection<Long> employeeIds = convertList(pageResult.getList(), WorktimeDO::getEmployeeId);
+        Map<Long, EmployeeDO> employeeMap = employeeService.getEmployeetMap(employeeIds);
         // 拼接结果返回
         List<WorktimeRespVO> worktimeList = new ArrayList<>(pageResult.getList().size());
         pageResult.getList().forEach(worktime -> {
@@ -111,7 +111,8 @@ public class WorktimeController {
             worktimeList.add(respVO);
         });
         // 2022/09/01 劉義民　手動追加　終了
-        return success(WorktimeConvert.INSTANCE.convertPage(pageResult));
+//        return success(WorktimeConvert.INSTANCE.convertPage(pageResult));
+        return success(new PageResult<>(worktimeList, pageResult.getTotal()));
     }
 
     @GetMapping("/export-excel")

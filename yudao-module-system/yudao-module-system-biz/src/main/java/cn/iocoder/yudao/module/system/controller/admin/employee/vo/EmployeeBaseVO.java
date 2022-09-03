@@ -17,7 +17,7 @@ public class EmployeeBaseVO {
 
     @ApiModelProperty(value = "社員番号", required = true)
     @NotNull(message = "社員番号不能为空")
-    private String employeeId;
+    private String employeeNum;
 
     @ApiModelProperty(value = "姓名", required = true)
     @NotNull(message = "姓名不能为空")

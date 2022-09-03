@@ -18,13 +18,13 @@ public class WorktimeExcelVO {
     private Long id;
 
     @ExcelProperty("社員番号")
-    private String employeeId;
+    private String employeeNum;
 
     @ExcelProperty("出勤年月")
     private String workingMonth;
 
     @ExcelProperty("稼働時間")
-    private Integer workingtimes;
+    private Float workingtimes;
 
     @ExcelProperty("新規日付")
     private Date createTime;

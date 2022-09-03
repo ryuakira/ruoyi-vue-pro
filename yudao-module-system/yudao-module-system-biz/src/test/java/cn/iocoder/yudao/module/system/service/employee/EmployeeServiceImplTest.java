@@ -46,11 +46,11 @@ public class EmployeeServiceImplTest extends BaseDbUnitTest {
         EmployeeCreateReqVO reqVO = randomPojo(EmployeeCreateReqVO.class);
 
         // 调用
-        Long employeeId = employeeService.createEmployee(reqVO);
+        Long EmployeeId = employeeService.createEmployee(reqVO);
         // 断言
-        assertNotNull(employeeId);
+        assertNotNull(EmployeeId);
         // 校验记录的属性是否正确
-        EmployeeDO employee = employeeMapper.selectById(employeeId);
+        EmployeeDO employee = employeeMapper.selectById(EmployeeId);
         assertPojoEquals(reqVO, employee);
     }
 
@@ -108,7 +108,7 @@ public class EmployeeServiceImplTest extends BaseDbUnitTest {
     public void testGetEmployeePage() {
        // mock 数据
        EmployeeDO dbEmployee = randomPojo(EmployeeDO.class, o -> { // 等会查询到
-           o.setEmployeeId(null);
+           o.setEmployeeNum(null);
            o.setEmployeeName(null);
            o.setEmployeeNameKana(null);
            o.setSex(null);
@@ -124,8 +124,8 @@ public class EmployeeServiceImplTest extends BaseDbUnitTest {
            o.setStatus(null);
        });
        employeeMapper.insert(dbEmployee);
-       // 测试 employeeId 不匹配
-       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setEmployeeId(null)));
+       // 测试 EmployeeNum 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setEmployeeNum(null)));
        // 测试 employeeName 不匹配
        employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setEmployeeName(null)));
        // 测试 employeeNameKana 不匹配
@@ -154,7 +154,7 @@ public class EmployeeServiceImplTest extends BaseDbUnitTest {
        employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setStatus(null)));
        // 准备参数
        EmployeePageReqVO reqVO = new EmployeePageReqVO();
-       reqVO.setEmployeeId(null);
+       reqVO.setEmployeeNum(null);
        reqVO.setEmployeeName(null);
        reqVO.setEmployeeNameKana(null);
        reqVO.setSex(null);
@@ -183,7 +183,7 @@ public class EmployeeServiceImplTest extends BaseDbUnitTest {
     public void testGetEmployeeList() {
        // mock 数据
        EmployeeDO dbEmployee = randomPojo(EmployeeDO.class, o -> { // 等会查询到
-           o.setEmployeeId(null);
+           o.setEmployeeNum(null);
            o.setEmployeeName(null);
            o.setEmployeeNameKana(null);
            o.setSex(null);
@@ -199,8 +199,8 @@ public class EmployeeServiceImplTest extends BaseDbUnitTest {
            o.setStatus(null);
        });
        employeeMapper.insert(dbEmployee);
-       // 测试 employeeId 不匹配
-       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setEmployeeId(null)));
+       // 测试 EmployeeNum 不匹配
+       employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setEmployeeNum(null)));
        // 测试 employeeName 不匹配
        employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setEmployeeName(null)));
        // 测试 employeeNameKana 不匹配
@@ -229,7 +229,7 @@ public class EmployeeServiceImplTest extends BaseDbUnitTest {
        employeeMapper.insert(cloneIgnoreId(dbEmployee, o -> o.setStatus(null)));
        // 准备参数
        EmployeeExportReqVO reqVO = new EmployeeExportReqVO();
-       reqVO.setEmployeeId(null);
+       reqVO.setEmployeeNum(null);
        reqVO.setEmployeeName(null);
        reqVO.setEmployeeNameKana(null);
        reqVO.setSex(null);

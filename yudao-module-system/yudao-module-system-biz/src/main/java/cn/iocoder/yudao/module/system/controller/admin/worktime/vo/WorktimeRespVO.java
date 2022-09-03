@@ -21,8 +21,8 @@ public class WorktimeRespVO extends WorktimeBaseVO {
     @Data
     public static class Employee {
 
-        @ApiModelProperty(value = "社員番号", required = true, example = "T000120220830")
-        private String employeeId;
+        @ApiModelProperty(value = "社員主鍵", required = true, example = "シーケンスNo")
+        private Long employeeId;
 
         @ApiModelProperty(value = "社員名前", required = true, example = "田中健一")
         private String employeeName;

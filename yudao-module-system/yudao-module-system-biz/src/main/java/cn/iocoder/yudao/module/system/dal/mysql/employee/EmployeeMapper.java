@@ -19,7 +19,7 @@ public interface EmployeeMapper extends BaseMapperX<EmployeeDO> {
 
     default PageResult<EmployeeDO> selectPage(EmployeePageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<EmployeeDO>()
-                .eqIfPresent(EmployeeDO::getEmployeeId, reqVO.getEmployeeId())
+                .eqIfPresent(EmployeeDO::getEmployeeNum, reqVO.getEmployeeNum())
                 .likeIfPresent(EmployeeDO::getEmployeeName, reqVO.getEmployeeName())
                 .eqIfPresent(EmployeeDO::getEmployeeNameKana, reqVO.getEmployeeNameKana())
                 .eqIfPresent(EmployeeDO::getSex, reqVO.getSex())
@@ -38,7 +38,7 @@ public interface EmployeeMapper extends BaseMapperX<EmployeeDO> {
 
     default List<EmployeeDO> selectList(EmployeeExportReqVO reqVO) {
         return selectList(new LambdaQueryWrapperX<EmployeeDO>()
-                .eqIfPresent(EmployeeDO::getEmployeeId, reqVO.getEmployeeId())
+                .eqIfPresent(EmployeeDO::getEmployeeNum, reqVO.getEmployeeNum())
                 .likeIfPresent(EmployeeDO::getEmployeeName, reqVO.getEmployeeName())
                 .eqIfPresent(EmployeeDO::getEmployeeNameKana, reqVO.getEmployeeNameKana())
                 .eqIfPresent(EmployeeDO::getSex, reqVO.getSex())

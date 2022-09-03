@@ -14,13 +14,13 @@ public class WorktimeBaseVO {
 
     @ApiModelProperty(value = "社員番号", required = true)
     @NotNull(message = "社員番号不能为空")
-    private String employeeId;
+    private String employeeNum;
 
     @ApiModelProperty(value = "出勤年月", required = true)
     @NotNull(message = "出勤年月不能为空")
     private String workingMonth;
 
     @ApiModelProperty(value = "稼働時間")
-    private Integer workingtimes;
+    private Float workingtimes;
 
 }

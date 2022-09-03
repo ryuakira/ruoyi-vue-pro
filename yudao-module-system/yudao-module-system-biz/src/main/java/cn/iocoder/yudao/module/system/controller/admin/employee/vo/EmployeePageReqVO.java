@@ -15,7 +15,7 @@ import static cn.iocoder.yudao.framework.common.util.date.DateUtils.FORMAT_YEAR_
 public class EmployeePageReqVO extends PageParam {
 
     @ApiModelProperty(value = "社員番号")
-    private String employeeId;
+    private String EmployeeNum;
 
     @ApiModelProperty(value = "姓名")
     private String employeeName;

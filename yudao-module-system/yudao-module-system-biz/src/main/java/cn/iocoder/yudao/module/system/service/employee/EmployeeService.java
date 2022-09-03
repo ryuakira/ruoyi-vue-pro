@@ -56,9 +56,12 @@ public interface EmployeeService {
     List<EmployeeDO> getEmployeeList(Collection<Long> ids);
 
     // 2022/09/01 劉義民　社員番号で社員名前を取得処理　追加開始
-    List<EmployeeDO> getEmployeeInfoList(Collection<String> employeeIds);
+    List<EmployeeDO> getEmployeeInfoList(Collection<Long> iDs);
 //    List<EmployeeDO> getEmployeeInfoList2(Map<String, EmployeeDO> colMap);
     // 2022/09/01 劉義民　社員番号で社員名前を取得処理　追加終了
+
+    List<EmployeeDO> getEmployeeInfoList2(Map<String, Object> colMap);
+
     /**
      * 获得社員分页
      *
@@ -86,15 +89,15 @@ public interface EmployeeService {
     /**
      * 获得指定编号的社員 Map
      *
-     * @param employeeIds 社員番号数组
+     * @param iDs 社員番号数组
      * @return 社員 Map
      */
-    default Map<String, EmployeeDO> getEmployeetMap(Collection<String> employeeIds) {
-        if (CollUtil.isEmpty(employeeIds)) {
+    default Map<Long, EmployeeDO> getEmployeetMap(Collection<Long> iDs) {
+        if (CollUtil.isEmpty(iDs)) {
             return Collections.emptyMap();
         }
-        List<EmployeeDO> list = getEmployeeInfoList(employeeIds);
-        return CollectionUtils.convertMap(list, EmployeeDO::getEmployeeId);
+        List<EmployeeDO> list = getEmployeeInfoList(iDs);
+        return CollectionUtils.convertMap(list, EmployeeDO::getId);
     }
 // 2022/09/01 劉義民　社員番号で社員名前を取得処理　追加終了
 }

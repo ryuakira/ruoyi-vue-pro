@@ -70,13 +70,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
     // 2022/09/01 劉義民　社員番号で社員名前を取得処理　追加開始
     @Override
-    public List<EmployeeDO> getEmployeeInfoList(Collection<String> employeeIds) {
-        return employeeMapper.selectBatchIds(employeeIds);
+    public List<EmployeeDO> getEmployeeInfoList(Collection<Long> ids) {
+        return employeeMapper.selectBatchIds(ids);
     }
-//    @Override
-//    public List<EmployeeDO> getEmployeeInfoList2(Map<String, EmployeeDO> colMap) {
-////        return employeeMapper.selectByMap(colMap);
-//    }
+    @Override
+    public List<EmployeeDO> getEmployeeInfoList2(Map<String, Object> colMap) {
+        return employeeMapper.selectByMap(colMap);
+    }
 
 
     // 2022/09/01 劉義民　社員番号で社員名前を取得処理　追加終了

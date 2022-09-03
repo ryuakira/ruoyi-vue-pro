@@ -29,14 +29,11 @@ public class WorktimeDO extends BaseDO {
     /**
      * 社員番号
      */
-    private String employeeId;
-
-//    /**
-//     * 社員姓名
-//     *
-//     * 关联 {@link EmployeeDO#getEmployeeName()}
-//     */
-//    private String employeeName;
+    private String employeeNum;
+    /**
+     * 社員id主鍵
+     */
+    private Long employeeId;
     /**
      * 出勤年月
      */
@@ -44,6 +41,6 @@ public class WorktimeDO extends BaseDO {
     /**
      * 稼働時間
      */
-    private Integer workingtimes;
+    private Float workingtimes;
 
 }

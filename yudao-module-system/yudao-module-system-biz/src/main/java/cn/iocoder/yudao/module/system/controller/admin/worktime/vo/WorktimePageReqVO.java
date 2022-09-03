@@ -12,10 +12,13 @@ import cn.iocoder.yudao.framework.common.pojo.PageParam;
 public class WorktimePageReqVO extends PageParam {
 
     @ApiModelProperty(value = "社員番号")
-    private String employeeId;
+    private String employeeNum;
 
-    @ApiModelProperty(value = "社員番号")
-    private String employeeName;
+    @ApiModelProperty(value = "开始出勤年月")
+    private String beginWorkingMonth;
+
+    @ApiModelProperty(value = "结束出勤年月")
+    private String endWorkingMonth;
 
     @ApiModelProperty(value = "出勤年月")
     private String workingMonth;

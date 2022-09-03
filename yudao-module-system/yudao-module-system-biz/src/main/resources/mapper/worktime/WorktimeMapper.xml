@@ -11,7 +11,7 @@
 <!--    <select id="selectList2" resultType="WorktimeDO">-->
 <!--        select w.id, w.employee_id, e.employee_name, w.working_month, w.workingtimes, w.create_time-->
 <!--        from system_tecreas_worktime w-->
-<!--        left join system_tecreas_employee e-->
+<!--&#45;&#45;         left join system_tecreas_employee e-->
 <!--        on w.employee_id = e.employee_id-->
 <!--    </select>-->
 </mapper>

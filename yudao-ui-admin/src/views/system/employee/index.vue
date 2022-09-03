@@ -3,8 +3,8 @@
 
     <!-- 搜索工作栏 -->
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="社員番号" prop="employeeId">
-        <el-input v-model="queryParams.employeeId" placeholder="请输入社員番号" clearable @keyup.enter.native="handleQuery"/>
+      <el-form-item label="社員番号" prop="id">
+        <el-input v-model="queryParams.EmployeeNum" placeholder="请输入社員番号" clearable @keyup.enter.native="handleQuery"/>
       </el-form-item>
       <el-form-item label="姓名" prop="employeeName">
         <el-input v-model="queryParams.employeeName" placeholder="请输入姓名" clearable @keyup.enter.native="handleQuery"/>
@@ -76,7 +76,7 @@
     <!-- 列表 -->
     <el-table v-loading="loading" :data="list">
       <el-table-column label="ID" align="center" prop="id" />
-      <el-table-column label="社員番号" align="center" prop="employeeId" />
+      <el-table-column label="社員番号" align="center" prop="employeeNum" />
       <el-table-column label="姓名" align="center" prop="employeeName" />
       <el-table-column label="姓名カナ" align="center" prop="employeeNameKana" />
       <el-table-column label="性别" align="center" prop="sex" />
@@ -127,8 +127,8 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="180px">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="個人情報" name="first">
-            <el-form-item label="社員番号" prop="employeeId">
-              <el-input v-model="form.employeeId" placeholder="自動採番" disabled />
+            <el-form-item label="社員番号" prop="employeeNum">
+              <el-input v-model="form.employeeNum" placeholder="自動採番" disabled />
             </el-form-item>
             <el-form-item label="姓名" prop="employeeName">
               <el-input v-model="form.employeeName" placeholder="请输入姓名" />
@@ -234,7 +234,7 @@ export default {
       queryParams: {
         pageNo: 1,
         pageSize: 10,
-        employeeId: null,
+        EmployeeNum: null,
         employeeName: null,
         employeeNameKana: null,
         sex: null,
@@ -252,7 +252,7 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        // employeeId: [{ required: true, message: "社員番号不能为空", trigger: "blur" }],
+        // EmployeeNum: [{ required: true, message: "社員番号不能为空", trigger: "blur" }],
         employeeName: [{ required: true, message: "姓名不能为空", trigger: "blur" }],
         employeeNameKana: [{ required: true, message: "姓名カナ不能为空", trigger: "blur" }],
         avatar: [{ required: true, message: "画像URL不能为空", trigger: "blur" }],
@@ -317,7 +317,7 @@ export default {
     reset() {
       this.form = {
         id: undefined,
-        employeeId: undefined,
+        employeeNum: undefined,
         employeeName: undefined,
         employeeNameKana: undefined,
         avatar: undefined,
@@ -366,13 +366,13 @@ export default {
     },
     /** 跳转至勤怠管理画面 */
     handleWorkTime(row) {
-      // if (row.employeeId != '') {
-      //   this.$router.push({ path: "/system/worktime", query: {id: row.employeeId} });
-      // } else {
-      //   this.$router.push({ path: "/system/worktime" });
-      // }
-      // console.log(row.employeeId + "------");
-      this.$router.push({ path: "/system/worktime" });
+      if (row.EmployeeNum != '') {
+        this.$router.push({ path: "/system/worktime", query: {id: row.EmployeeNum} });
+      } else {
+        this.$router.push({ path: "/system/worktime" });
+      }
+      // console.log(row.EmployeeNum + "------");
+      // this.$router.push({ path: "/system/worktime" });
     },
     /** 提交按钮 */
     submitForm() {
