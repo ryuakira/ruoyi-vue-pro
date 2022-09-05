@@ -3,14 +3,19 @@
 
     <!-- 搜索工作栏 -->
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="社員番号" prop="empolyeeId">
-        <el-input v-model="queryParams.empolyeeId" placeholder="请输入社員番号" clearable @keyup.enter.native="handleQuery"/>
+      <el-form-item label="社員名" prop="employeeName">
+        <el-select v-model="queryParams.employeeNum"
+                   placeholder="请选择社員名"
+                   clearable
+                   size="small">
+          <el-option v-for="item in employeeList"
+                  :value="item.employeeNum"
+                  :key="item.id"
+                  :label="item.employeeName"/>
+        </el-select>
       </el-form-item>
-      <el-form-item label="出勤年月" prop="workingyearmonth">
-        <el-date-picker clearable v-model="queryParams.workingyearmonth" type="date" value-format="yyyy-MM-dd" placeholder="选择出勤年月" />
-      </el-form-item>
-      <el-form-item label="稼働時間" prop="workingtime">
-        <el-input v-model="queryParams.workingtime" placeholder="请输入稼働時間" clearable @keyup.enter.native="handleQuery"/>
+      <el-form-item label="出勤年月" prop="workingMonth">
+        <el-input v-model="queryParams.workingMonth" placeholder="请输入出勤年月" type="month" dataformatas="yyyy-MM" clearable @keyup.enter.native="handleQuery"/>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
@@ -33,10 +38,10 @@
 
     <!-- 列表 -->
     <el-table v-loading="loading" :data="list">
-      <el-table-column label="勤怠番号" align="center" prop="id" />
-      <el-table-column label="社員番号" align="center" prop="empolyeeId" />
-      <el-table-column label="出勤年月" align="center" prop="workingyearmonth" />
-      <el-table-column label="稼働時間" align="center" prop="workingtime" />
+      <el-table-column label="社員番号" align="center" prop="employeeNum" />
+      <el-table-column label="社員名前" align="center" prop="employee.employeeName" />
+      <el-table-column label="出勤年月" align="center" prop="workingMonth" width="180"/>
+      <el-table-column label="稼働時間" align="center" prop="workingtimes" />
       <el-table-column label="新規日付" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -58,14 +63,25 @@
     <!-- 对话框(添加 / 修改) -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="社員番号" prop="empolyeeId">
-          <el-input v-model="form.empolyeeId" placeholder="请输入社員番号" />
+        <el-form-item label="社員番号" prop="employeeNum" >
+          <el-input v-model="form.employeeNum" disabled />
         </el-form-item>
-        <el-form-item label="出勤年月" prop="workingyearmonth">
-          <el-date-picker clearable v-model="form.workingyearmonth" type="date" value-format="timestamp" placeholder="选择出勤年月" />
+        <el-form-item label="社員名前" prop="employeeId">
+          <el-select v-model="form.employeeName"
+                     placeholder="请选择社員"
+                     clearable style="width: 100%" @change="selectedChange">
+            <!--   {value:item.id, label:item.employeeNum} ←--⭐️選んでる社員主鍵で社員番号を特定する （画面・社員番号が連動的に表示できるため）-->
+            <el-option v-for="item in employeeList"
+                       :value="{value:item.id, label:item.employeeNum}"
+                       :key="item.id"
+                       :label="item.employeeName"/>
+          </el-select>
         </el-form-item>
-        <el-form-item label="稼働時間" prop="workingtime">
-          <el-input v-model="form.workingtime" placeholder="请输入稼働時間" />
+        <el-form-item label="出勤年月" prop="workingMonth">
+          <el-date-picker clearable v-model="form.workingMonth" type="month" placeholder="选择出勤年月" value-format="yyyy-MM" />
+        </el-form-item>
+        <el-form-item label="稼働時間" prop="workingtimes">
+          <el-input v-model="form.workingtimes" placeholder="请输入稼働時間" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -78,6 +94,7 @@
 
 <script>
 import { createWorktime, updateWorktime, deleteWorktime, getWorktime, getWorktimePage, exportWorktimeExcel } from "@/api/system/worktime";
+import { listSimpleEmployee } from "@/api/system/employee";
 
 export default {
   name: "Worktime",
@@ -85,6 +102,11 @@ export default {
   },
   data() {
     return {
+
+      // 手动追加 2022/08/30 start ---社员姓名下拉框 ----//
+      employeeList: [],
+      getEmplyNum:null,
+      // 手动追加 2022/08/30 end ----社员姓名下拉框 ----//
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -103,22 +125,50 @@ export default {
       queryParams: {
         pageNo: 1,
         pageSize: 10,
-        empolyeeId: null,
-        workingyearmonth: null,
+        employeeId: null,
+        employeeNum: null,
+        workingMonth: null,
+        workingtimes: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        empolyeeId: [{ required: true, message: "社員番号不能为空", trigger: "blur" }],
-        workingyearmonth: [{ required: true, message: "出勤年月不能为空", trigger: "blur" }],
+        employeeId: [{ required: true, message: "社員不能为空", trigger: "change" }],
+        workingMonth: [{ required: true, message: "勤怠年月不能为空", trigger: "change" }],
+        workingtimes: [{ required: true, message: "稼働時間不能为空", trigger: "change" }],
       }
     };
   },
   created() {
     this.getList();
+    /** 获取在职员工下拉框列表 */
+    listSimpleEmployee().then(response => {
+      this.employeeList = response.data;
+    });
   },
   methods: {
+    // 手動追加 start -------//
+    // selectBlur(e) {
+    //     if (e.target.value != '') {
+    //       // this.value = e.target.value + '(Others)';
+    //       this.value = e.target.value +'';
+    //       this.$forceUpdate();
+    //     }
+    //   },
+    // selectClear() {
+    //    this.value = '';
+    //    this.$forceUpdate();
+    //  },
+    selectedChange(val) {
+       const{value,label} = val
+       // 选中下拉框的社員名，自动显示社員番号
+       this.form.employeeNum = label
+       // 将当前员工的主键值赋值给勤怠表的employee_id字段
+       this.form.employeeId = value
+       this.$forceUpdate();
+     },
+    // 手動追加 end -------//
     /** 查询列表 */
     getList() {
       this.loading = true;
@@ -140,9 +190,11 @@ export default {
     reset() {
       this.form = {
         id: undefined,
-        empolyeeId: undefined,
-        workingyearmonth: undefined,
-        workingtime: undefined,
+        employeeNum: undefined,
+        employeeId: undefined,
+        employeeName:undefined,
+        workingMonth: undefined,
+        workingtimes: undefined,
       };
       this.resetForm("form");
     },
@@ -153,6 +205,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.employeeNum = undefined;
       this.resetForm("queryForm");
       this.handleQuery();
     },

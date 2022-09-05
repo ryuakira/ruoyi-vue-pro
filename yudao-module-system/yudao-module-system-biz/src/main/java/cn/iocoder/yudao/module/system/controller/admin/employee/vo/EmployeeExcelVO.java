@@ -14,35 +14,53 @@ import com.alibaba.excel.annotation.ExcelProperty;
 @Data
 public class EmployeeExcelVO {
 
-    @ExcelProperty("社員番号")
+    @ExcelProperty("ID")
     private Long id;
 
-    @ExcelProperty("社員名")
-    private String familyname;
+    @ExcelProperty("社員番号")
+    private String employeeNum;
 
-    @ExcelProperty("社員名")
-    private String givenname;
+    @ExcelProperty("姓名")
+    private String employeeName;
 
-    @ExcelProperty("画像")
-    private String avatar;
+    @ExcelProperty("姓名カナ")
+    private String employeeNameKana;
 
-    @ExcelProperty("社員性别")
+    @ExcelProperty("性别")
     private Integer sex;
 
-    @ExcelProperty("年齢")
-    private Integer age;
+    @ExcelProperty("年月日")
+    private Date birthday;
 
-    @ExcelProperty("就職状態")
-    private Integer status;
+    @ExcelProperty("在留カード番号")
+    private String resideceCardId;
+
+    @ExcelProperty("マイナンバーカード番号")
+    private String mynumberCardId;
+
+    @ExcelProperty("雇用契約番号")
+    private String emplyCntrctNumbr;
 
     @ExcelProperty("携帯番号")
     private String mobile;
 
-    @ExcelProperty("ログインパスワード")
-    private String password;
+    @ExcelProperty("郵便番号")
+    private String postcode;
+
+    @ExcelProperty("住所")
+    private String address;
 
     @ExcelProperty("最新履歴")
     private String resume;
+
+    @ExcelProperty("部門番号")
+    private Long deptId;
+
+    @ExcelProperty("入社日")
+    private Date hireDate;
+
+    @ExcelProperty("就職状態")
+    private Integer status;
 
     @ExcelProperty("新規日付")
     private Date createTime;

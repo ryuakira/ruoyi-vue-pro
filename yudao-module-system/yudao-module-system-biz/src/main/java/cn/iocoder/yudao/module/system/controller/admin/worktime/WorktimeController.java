@@ -1,5 +1,12 @@
 package cn.iocoder.yudao.module.system.controller.admin.worktime;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.iocoder.yudao.module.system.controller.admin.employee.vo.EmployeeRespVO;
+import cn.iocoder.yudao.module.system.controller.admin.user.vo.user.UserPageItemRespVO;
+import cn.iocoder.yudao.module.system.convert.employee.EmployeeConvert;
+import cn.iocoder.yudao.module.system.convert.user.UserConvert;
+import cn.iocoder.yudao.module.system.dal.dataobject.employee.EmployeeDO;
+import cn.iocoder.yudao.module.system.service.employee.EmployeeService;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -15,10 +22,13 @@ import java.io.IOException;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
-
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertList;
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertSet;
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 
 import cn.iocoder.yudao.framework.operatelog.core.annotations.OperateLog;
+
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertList;
 import static cn.iocoder.yudao.framework.operatelog.core.enums.OperateTypeEnum.*;
 
 import cn.iocoder.yudao.module.system.controller.admin.worktime.vo.*;
@@ -34,6 +44,8 @@ public class WorktimeController {
 
     @Resource
     private WorktimeService worktimeService;
+    @Resource
+    private EmployeeService employeeService;
 
     @PostMapping("/create")
     @ApiOperation("创建勤怠")
@@ -82,7 +94,25 @@ public class WorktimeController {
     @PreAuthorize("@ss.hasPermission('system:worktime:query')")
     public CommonResult<PageResult<WorktimeRespVO>> getWorktimePage(@Valid WorktimePageReqVO pageVO) {
         PageResult<WorktimeDO> pageResult = worktimeService.getWorktimePage(pageVO);
-        return success(WorktimeConvert.INSTANCE.convertPage(pageResult));
+        if (CollUtil.isEmpty(pageResult.getList())) {
+            return success(new PageResult<>(pageResult.getTotal())); // 返回空
+        }
+
+        // 2022/09/01 劉義民　手動追加　開始
+        // 参照开发文档 https://doc.iocoder.cn/mybatis/#_6-mapper-xml "尽量避免数据库的连表（多表）查询"
+        // 获得拼接需要的数据
+        Collection<Long> employeeIds = convertList(pageResult.getList(), WorktimeDO::getEmployeeId);
+        Map<Long, EmployeeDO> employeeMap = employeeService.getEmployeetMap(employeeIds);
+        // 拼接结果返回
+        List<WorktimeRespVO> worktimeList = new ArrayList<>(pageResult.getList().size());
+        pageResult.getList().forEach(worktime -> {
+            WorktimeRespVO respVO = WorktimeConvert.INSTANCE.convert(worktime);
+            respVO.setEmployee(WorktimeConvert.INSTANCE.convert(employeeMap.get(worktime.getEmployeeId())));
+            worktimeList.add(respVO);
+        });
+        // 2022/09/01 劉義民　手動追加　終了
+//        return success(WorktimeConvert.INSTANCE.convertPage(pageResult));
+        return success(new PageResult<>(worktimeList, pageResult.getTotal()));
     }
 
     @GetMapping("/export-excel")

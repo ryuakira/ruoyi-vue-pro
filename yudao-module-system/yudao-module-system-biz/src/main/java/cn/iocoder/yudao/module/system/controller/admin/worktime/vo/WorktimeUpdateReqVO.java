@@ -15,4 +15,7 @@ public class WorktimeUpdateReqVO extends WorktimeBaseVO {
     @NotNull(message = "勤怠番号不能为空")
     private Long id;
 
+    @ApiModelProperty(value = "社員id主鍵")
+    private Long employeeId;
+
 }

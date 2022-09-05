@@ -10,15 +10,15 @@ import cn.iocoder.yudao.framework.common.pojo.PageParam;
 public class WorktimeExportReqVO {
 
     @ApiModelProperty(value = "社員番号")
-    private Long empolyeeId;
+    private String employeeNum;
+
+    @ApiModelProperty(value = "开始出勤年月")
+    private String beginWorkingMonth;
+
+    @ApiModelProperty(value = "结束出勤年月")
+    private String endWorkingMonth;
 
     @ApiModelProperty(value = "出勤年月")
-    private String workingyearmonth;
-
-    @ApiModelProperty(value = "开始稼働時間")
-    private Long beginWorkingtime;
-
-    @ApiModelProperty(value = "结束稼働時間")
-    private Long endWorkingtime;
+    private String workingMonth;
 
 }

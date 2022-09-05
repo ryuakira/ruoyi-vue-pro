@@ -10,7 +10,17 @@ import javax.validation.constraints.*;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class EmployeeUpdateReqVO extends EmployeeBaseVO {
-    @ApiModelProperty(value = "社員番号", required = true, example = "1024")
-    @NotNull(message = "社員番号不能为空")
+
+    @ApiModelProperty(value = "ID", required = true)
+    @NotNull(message = "ID不能为空")
     private Long id;
+
+    @ApiModelProperty(value = "画像URL", required = true)
+    @NotNull(message = "画像URL不能为空")
+    private String avatar;
+
+    @ApiModelProperty(value = "在留カード番号コピー", required = true)
+    @NotNull(message = "在留カード番号コピー不能为空")
+    private String resideceCardCopy;
+
 }

@@ -27,6 +27,7 @@ export const DICT_TYPE = {
   SYSTEM_BUSINESS_FLAG: 'system_business_flag', // 取引关系
   SYSTEM_CURRENCY: 'system_currency', // 货币种类
   SYSTEM_COMPANY_CATEGORY: 'system_company_category', // 会社類別
+  SYSTEM_EMPLOYEE_STATUS: 'system_employee_status', // 员工在职状态
 
   // ========== INFRA 模块 ==========
   INFRA_BOOLEAN_STRING: 'infra_boolean_string',

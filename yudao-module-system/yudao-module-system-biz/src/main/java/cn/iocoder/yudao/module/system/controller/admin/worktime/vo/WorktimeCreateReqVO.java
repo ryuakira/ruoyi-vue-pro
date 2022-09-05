@@ -11,4 +11,7 @@ import javax.validation.constraints.*;
 @ToString(callSuper = true)
 public class WorktimeCreateReqVO extends WorktimeBaseVO {
 
+    @ApiModelProperty(value = "社員id主鍵")
+    private Long employeeId;
+
 }

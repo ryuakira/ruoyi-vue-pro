@@ -2,7 +2,11 @@ package cn.iocoder.yudao.module.system.service.employee;
 
 import java.util.*;
 import javax.validation.*;
+
+import cn.hutool.core.collection.CollUtil;
+import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
 import cn.iocoder.yudao.module.system.controller.admin.employee.vo.*;
+import cn.iocoder.yudao.module.system.dal.dataobject.dept.DeptDO;
 import cn.iocoder.yudao.module.system.dal.dataobject.employee.EmployeeDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 
@@ -51,6 +55,13 @@ public interface EmployeeService {
      */
     List<EmployeeDO> getEmployeeList(Collection<Long> ids);
 
+    // 2022/09/01 劉義民　社員番号で社員名前を取得処理　追加開始
+    List<EmployeeDO> getEmployeeInfoList(Collection<Long> iDs);
+//    List<EmployeeDO> getEmployeeInfoList2(Map<String, EmployeeDO> colMap);
+    // 2022/09/01 劉義民　社員番号で社員名前を取得処理　追加終了
+
+    List<EmployeeDO> getEmployeeInfoList2(Map<String, Object> colMap);
+
     /**
      * 获得社員分页
      *
@@ -67,4 +78,26 @@ public interface EmployeeService {
      */
     List<EmployeeDO> getEmployeeList(EmployeeExportReqVO exportReqVO);
 
+    /**
+     * 获得在职状态的员工列表
+     *
+     * @param status 状态
+     * @return 在职状态的员工列表
+     */
+    List<EmployeeDO> getEmployeeListByStatus(Integer status);
+// 2022/09/01 劉義民　社員番号で社員名前を取得処理　追加開始
+    /**
+     * 获得指定编号的社員 Map
+     *
+     * @param iDs 社員番号数组
+     * @return 社員 Map
+     */
+    default Map<Long, EmployeeDO> getEmployeetMap(Collection<Long> iDs) {
+        if (CollUtil.isEmpty(iDs)) {
+            return Collections.emptyMap();
+        }
+        List<EmployeeDO> list = getEmployeeInfoList(iDs);
+        return CollectionUtils.convertMap(list, EmployeeDO::getId);
+    }
+// 2022/09/01 劉義民　社員番号で社員名前を取得処理　追加終了
 }

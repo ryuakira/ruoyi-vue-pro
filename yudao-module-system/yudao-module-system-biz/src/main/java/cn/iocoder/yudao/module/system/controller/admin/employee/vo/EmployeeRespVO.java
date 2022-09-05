@@ -10,7 +10,7 @@ import io.swagger.annotations.*;
 @ToString(callSuper = true)
 public class EmployeeRespVO extends EmployeeBaseVO {
 
-    @ApiModelProperty(value = "社員番号", required = true)
+    @ApiModelProperty(value = "ID", required = true)
     private Long id;
 
     @ApiModelProperty(value = "新規日付", required = true)
