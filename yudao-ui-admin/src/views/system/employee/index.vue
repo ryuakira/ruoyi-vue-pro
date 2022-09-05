@@ -78,10 +78,12 @@
       <el-table-column label="姓名" align="center" prop="employeeName" />
       <el-table-column label="姓名カナ" align="center" prop="employeeNameKana" />
       <el-table-column label="性别" align="center" prop="sex"/>
-      <el-table-column label="生年月日" align="center" prop="birthday" width="180" >
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.birthday) }}</span>
-        </template>
+
+      <el-table-column label="生年月日" align="center" prop="birthday" :formatter="dateFormat" width="180" >
+<!--      <el-table-column label="生年月日" align="center" prop="birthday" width="180" >-->
+<!--        <template slot-scope="scope">-->
+<!--          <span onformdata="dateFormat">{{ parseTime(scope.row.birthday) }}</span>-->
+<!--        </template>-->
       </el-table-column>
       <el-table-column label="在留カード番号" align="center" prop="resideceCardId" />
       <el-table-column label="マイナンバーカード番号" align="center" prop="mynumberCardId" />
@@ -135,7 +137,12 @@
               <el-input v-model="form.employeeNameKana" placeholder="请输入姓名カナ" />
             </el-form-item>
             <el-form-item label="画像URL" prop="avatar">
-              <el-input v-model="form.avatar" placeholder="请输入画像URL" />
+              <el-input v-model="form.avatar" placeholder="点击下面按钮上传照片" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="uploadDialogVisible = true">
+                <Icon icon="ep:upload" class="mr-5px" /> 上传照片
+              </el-button>
             </el-form-item>
             <el-form-item label="性别" prop="sex">
               <el-select v-model="form.sex" placeholder="请选择">
@@ -144,7 +151,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="生年月日" prop="birthday">
-              <el-date-picker clearable v-model="form.birthday" type="date"  placeholder="选择年月日" />
+              <el-date-picker clearable v-model="form.birthday" type="date"  placeholder="选择年月日" value-format="yyyy-MM-dd" />
             </el-form-item>
             <el-form-item label="携帯番号" prop="mobile">
               <el-input v-model="form.mobile" placeholder="请输入携帯番号" />
@@ -162,7 +169,12 @@
               <el-input v-model="form.resideceCardId" placeholder="请输入在留カード番号" />
             </el-form-item>
             <el-form-item label="在留カードコピー" prop="resideceCardCopy">
-              <el-input v-model="form.resideceCardCopy" placeholder="请输入在留カード番号コピー" />
+              <el-input v-model="form.resideceCardCopy" placeholder="点击下面按钮上传在留卡复印件" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="uploadDialogVisible = true">
+                <Icon icon="ep:upload" class="mr-5px" /> 上传在留卡复印件
+              </el-button>
             </el-form-item>
             <el-form-item label="マイナンバーカード番号" prop="mynumberCardId">
               <el-input v-model="form.mynumberCardId" placeholder="请输入マイナンバーカード番号" />
@@ -174,7 +186,6 @@
               <el-input v-model="form.resume" placeholder="请输入最新履歴" />
             </el-form-item>
             <el-form-item label="所属部门" prop="deptId">
-<!--              <el-input v-model="form.deptId" placeholder="请输入部門番号" />-->
               <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" :clearable="false"
                           placeholder="请选择所属部门" :normalizer="normalizer"/>
             </el-form-item>
@@ -203,6 +214,7 @@ import { createEmployee, updateEmployee, deleteEmployee, getEmployee, getEmploye
 import {listSimpleDepts} from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import moment from "moment";
 export default {
   name: "Employee",
   components: { Treeselect
@@ -253,11 +265,11 @@ export default {
         // EmployeeNum: [{ required: true, message: "社員番号不能为空", trigger: "blur" }],
         employeeName: [{ required: true, message: "姓名不能为空", trigger: "blur" }],
         employeeNameKana: [{ required: true, message: "姓名カナ不能为空", trigger: "blur" }],
-        avatar: [{ required: true, message: "画像URL不能为空", trigger: "blur" }],
+        // avatar: [{ required: true, message: "画像URL不能为空", trigger: "blur" }],
         sex: [{ required: true, message: "性别不能为空", trigger: "change" }],
         birthday: [{ required: true, message: "年月日不能为空", trigger: "blur" }],
         resideceCardId: [{ required: true, message: "在留カード番号不能为空", trigger: "blur" }],
-        resideceCardCopy: [{ required: true, message: "在留カード番号コピー不能为空", trigger: "blur" }],
+        // resideceCardCopy: [{ required: true, message: "在留カード番号コピー不能为空", trigger: "blur" }],
         mobile: [{ required: true, message: "携帯番号不能为空", trigger: "blur" }],
         address: [{ required: true, message: "住所不能为空", trigger: "blur" }],
         deptId: [{ required: true, message: "所属部門不能为空", trigger: "change" }],
@@ -372,6 +384,20 @@ export default {
       // console.log(row.EmployeeNum + "------");
       // this.$router.push({ path: "/system/worktime" });
     },
+    /** 2022/09/05 日期时间格式化处理  刘义民 手动追加
+     *  format日付　YYYY-MM-DD
+     *　时间格式化使用moent.js
+     *　如果开发环境里没有moent.js，需要先执行→「npm install moment --save」 命令
+     *  同时在该index.vue里import moment from "moment";
+     * */
+    dateFormat:function (row,column){
+      var date = row[column.property];
+      if (date === undefined) {
+        return "";
+      }
+      return moment(date).format("YYYY-MM-DD");
+    },
+
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
@@ -433,4 +459,3 @@ export default {
   }
 };
 </script>
-

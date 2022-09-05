@@ -83,6 +83,11 @@
         <el-form-item label="稼働時間" prop="workingtimes">
           <el-input v-model="form.workingtimes" placeholder="请输入稼働時間" />
         </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="uploadDialogVisible = true">
+            <Icon icon="ep:upload" class="mr-5px" /> 上传本月考勤文件
+          </el-button>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
