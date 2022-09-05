@@ -32,6 +32,8 @@ public class WorktimeDO extends BaseDO {
     private String employeeNum;
     /**
      * 社員id主鍵
+     *
+     * 关联 {@link EmployeeDO#getId()}
      */
     private Long employeeId;
     /**

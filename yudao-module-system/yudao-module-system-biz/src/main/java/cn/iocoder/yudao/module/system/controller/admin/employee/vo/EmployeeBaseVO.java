@@ -4,6 +4,8 @@ import lombok.*;
 import java.util.*;
 import io.swagger.annotations.*;
 import javax.validation.constraints.*;
+
+import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import static cn.iocoder.yudao.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND;
@@ -15,16 +17,18 @@ import static cn.iocoder.yudao.framework.common.util.date.DateUtils.FORMAT_YEAR_
 @Data
 public class EmployeeBaseVO {
 
-    @ApiModelProperty(value = "社員番号", required = true)
-    @NotNull(message = "社員番号不能为空")
+//    @ApiModelProperty(value = "社員番号", required = true)
+//    @NotNull(message = "社員番号不能为空")
     private String employeeNum;
 
     @ApiModelProperty(value = "姓名", required = true)
+    @Length(max = 16, message = "姓名长度不超过 16 位")
     @NotNull(message = "姓名不能为空")
     private String employeeName;
 
     @ApiModelProperty(value = "姓名カナ", required = true)
     @NotNull(message = "姓名カナ不能为空")
+    @Length(max = 16, message = "姓名长度不超过 16 位")
     private String employeeNameKana;
 
     @ApiModelProperty(value = "性别", required = true)
@@ -38,6 +42,7 @@ public class EmployeeBaseVO {
 
     @ApiModelProperty(value = "在留カード番号", required = true)
     @NotNull(message = "在留カード番号不能为空")
+    @Length(max = 16, message = "姓名长度不超过 16 位")
     private String resideceCardId;
 
     @ApiModelProperty(value = "マイナンバーカード番号")
@@ -48,6 +53,7 @@ public class EmployeeBaseVO {
 
     @ApiModelProperty(value = "携帯番号", required = true)
     @NotNull(message = "携帯番号不能为空")
+    @Length(max = 11, message = "电话号码长度不超过 11 位（例08012341234）")
     private String mobile;
 
     @ApiModelProperty(value = "郵便番号")

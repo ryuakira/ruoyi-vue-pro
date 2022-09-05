@@ -18,21 +18,21 @@
                      :key="dict.value" :label="dict.label" :value="dict.value"/>
         </el-select>
       </el-form-item>
-      <el-form-item label="年月日" prop="birthday">
+      <el-form-item label="生年月日" prop="birthday">
         <el-date-picker clearable v-model="queryParams.birthday" type="date" placeholder="选择年月日" />
       </el-form-item>
-      <el-form-item label="在留カード番号" prop="resideceCardId">
-        <el-input v-model="queryParams.resideceCardId" placeholder="请输入在留カード番号" clearable @keyup.enter.native="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="マイナンバーカード番号" prop="mynumberCardId">
-        <el-input v-model="queryParams.mynumberCardId" placeholder="请输入マイナンバーカード番号" clearable @keyup.enter.native="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="雇用契約番号" prop="emplyCntrctNumbr">
-        <el-input v-model="queryParams.emplyCntrctNumbr" placeholder="请输入雇用契約番号" clearable @keyup.enter.native="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="携帯番号" prop="mobile">
-        <el-input v-model="queryParams.mobile" placeholder="请输入携帯番号" clearable @keyup.enter.native="handleQuery"/>
-      </el-form-item>
+<!--      <el-form-item label="在留カード番号" prop="resideceCardId">-->
+<!--        <el-input v-model="queryParams.resideceCardId" placeholder="请输入在留カード番号" clearable @keyup.enter.native="handleQuery"/>-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="マイナンバーカード番号" prop="mynumberCardId">-->
+<!--        <el-input v-model="queryParams.mynumberCardId" placeholder="请输入マイナンバーカード番号" clearable @keyup.enter.native="handleQuery"/>-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="雇用契約番号" prop="emplyCntrctNumbr">-->
+<!--        <el-input v-model="queryParams.emplyCntrctNumbr" placeholder="请输入雇用契約番号" clearable @keyup.enter.native="handleQuery"/>-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="携帯番号" prop="mobile">-->
+<!--        <el-input v-model="queryParams.mobile" placeholder="请输入携帯番号" clearable @keyup.enter.native="handleQuery"/>-->
+<!--      </el-form-item>-->
       <el-form-item label="郵便番号" prop="postcode">
         <el-input v-model="queryParams.postcode" placeholder="请输入郵便番号" clearable @keyup.enter.native="handleQuery"/>
       </el-form-item>
@@ -48,10 +48,8 @@
       </el-form-item>
       <el-form-item label="就職状態" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择就職状態" clearable size="small">
-          <el-select v-model="queryParams.sex" placeholder="请选择社員性别" clearable size="small">
             <el-option v-for="dict in this.getDictDatas(DICT_TYPE.SYSTEM_EMPLOYEE_STATUS)"
                        :key="dict.value" :label="dict.label" :value="dict.value"/>
-          </el-select>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -79,8 +77,8 @@
       <el-table-column label="社員番号" align="center" prop="employeeNum" />
       <el-table-column label="姓名" align="center" prop="employeeName" />
       <el-table-column label="姓名カナ" align="center" prop="employeeNameKana" />
-      <el-table-column label="性别" align="center" prop="sex" />
-      <el-table-column label="年月日" align="center" prop="birthday" width="180" >
+      <el-table-column label="性别" align="center" prop="sex"/>
+      <el-table-column label="生年月日" align="center" prop="birthday" width="180" >
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.birthday) }}</span>
         </template>
@@ -145,7 +143,7 @@
                            :key="parseInt(dict.value)" :label="dict.label" :value="parseInt(dict.value)"/>
               </el-select>
             </el-form-item>
-            <el-form-item label="年月日" prop="birthday">
+            <el-form-item label="生年月日" prop="birthday">
               <el-date-picker clearable v-model="form.birthday" type="date"  placeholder="选择年月日" />
             </el-form-item>
             <el-form-item label="携帯番号" prop="mobile">
@@ -163,7 +161,7 @@
             <el-form-item label="在留カード番号" prop="resideceCardId">
               <el-input v-model="form.resideceCardId" placeholder="请输入在留カード番号" />
             </el-form-item>
-            <el-form-item label="在留カード番号コピー" prop="resideceCardCopy">
+            <el-form-item label="在留カードコピー" prop="resideceCardCopy">
               <el-input v-model="form.resideceCardCopy" placeholder="请输入在留カード番号コピー" />
             </el-form-item>
             <el-form-item label="マイナンバーカード番号" prop="mynumberCardId">

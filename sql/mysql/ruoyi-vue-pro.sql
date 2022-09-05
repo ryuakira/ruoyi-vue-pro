@@ -2661,7 +2661,7 @@ CREATE TABLE `system_tecreas_employee`  (
     `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '画像URL',
     `sex` tinyint NOT NULL COMMENT '性别',
     `birthday` datetime NOT NULL COMMENT '年月日',
-    `residece_card_id` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '在留カード番号',
+    `residece_card_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '在留カード番号',
     `residece_card_copy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '在留カード番号コピー',
     `mynumber_card_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT 'マイナンバーカード番号',
     `emply_cntrct_numbr` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '雇用契約番号',
