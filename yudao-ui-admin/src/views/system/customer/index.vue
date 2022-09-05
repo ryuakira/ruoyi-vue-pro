@@ -108,8 +108,10 @@
                 @pagination="getList"/>
 
     <!-- 对话框(添加 / 修改) -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane label="基本情報" name="basic_info">
         <el-form-item label="公司名1" prop="name1">
           <el-input v-model="form.name1" placeholder="请输入公司名1" />
         </el-form-item>
@@ -123,22 +125,7 @@
           <el-input v-model="form.code" placeholder="请输入公司代码" />
         </el-form-item>
         <el-form-item label="公司描述">
-          <editor v-model="form.description" :min-height="192"/>
-        </el-form-item>
-        <el-form-item label="邮编" prop="zipcode">
-          <el-input v-model="form.zipcode" placeholder="请输入邮编" />
-        </el-form-item>
-        <el-form-item label="地址1" prop="address1">
-          <el-input v-model="form.address1" placeholder="请输入地址1" />
-        </el-form-item>
-        <el-form-item label="地址2" prop="address2">
-          <el-input v-model="form.address2" placeholder="请输入地址2" />
-        </el-form-item>
-        <el-form-item label="地址3" prop="address3">
-          <el-input v-model="form.address3" placeholder="请输入地址3" />
-        </el-form-item>
-        <el-form-item label="大楼名" prop="building">
-          <el-input v-model="form.building" placeholder="请输入大楼名" />
+          <editor v-model="form.description" :min-height="100"/>
         </el-form-item>
         <el-form-item label="电话" prop="phone">
           <el-input v-model="form.phone" placeholder="请输入电话" />
@@ -155,6 +142,25 @@
                        :key="dict.value" :label="dict.label" :value="parseInt(dict.value)" />
           </el-select>
         </el-form-item>
+          </el-tab-pane>
+          <el-tab-pane label="アドレス" name="address">
+        <el-form-item label="邮编" prop="zipcode">
+          <el-input v-model="form.zipcode" placeholder="请输入邮编" />
+        </el-form-item>
+        <el-form-item label="地址1" prop="address1">
+          <el-input v-model="form.address1" placeholder="请输入地址1" />
+        </el-form-item>
+        <el-form-item label="地址2" prop="address2">
+          <el-input v-model="form.address2" placeholder="请输入地址2" />
+        </el-form-item>
+        <el-form-item label="地址3" prop="address3">
+          <el-input v-model="form.address3" placeholder="请输入地址3" />
+        </el-form-item>
+        <el-form-item label="大楼名" prop="building">
+          <el-input v-model="form.building" placeholder="请输入大楼名" />
+        </el-form-item>
+          </el-tab-pane>
+        </el-tabs>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -175,6 +181,8 @@ export default {
   },
   data() {
     return {
+      // el-tab
+      activeName: 'basic_info',
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -226,6 +234,9 @@ export default {
     this.getList();
   },
   methods: {
+    handleClick(tab, event) {
+      console.log(tab, event);
+    },
     /** 查询列表 */
     getList() {
       this.loading = true;

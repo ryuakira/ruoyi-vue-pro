@@ -1,5 +1,13 @@
 import request from '@/utils/request'
 
+// 查询会社列表
+export function listCompany() {
+  return request({
+    url: '/system/company/list-all-simple',
+    method: 'get'
+  })
+}
+
 // 创建会社
 export function createCompany(data) {
   return request({

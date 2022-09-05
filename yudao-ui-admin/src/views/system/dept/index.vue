@@ -4,6 +4,11 @@
       <el-form-item label="部门名称" prop="name">
         <el-input v-model="queryParams.name" placeholder="请输入部门名称" clearable @keyup.enter.native="handleQuery"/>
       </el-form-item>
+      <el-form-item label="部门类别" prop="category">
+        <el-select v-model="queryParams.category" placeholder="部门类别" clearable size="small">
+          <el-option v-for="dict in companyDictDatas" :key="dict.value" :label="dict.label" :value="dict.value"/>
+        </el-select>
+      </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="菜单状态" clearable>
           <el-option v-for="dict in statusDictDatas" :key="parseInt(dict.value)" :label="dict.label" :value="parseInt(dict.value)"/>
@@ -30,7 +35,13 @@
               :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
       <el-table-column prop="name" label="部门名称" width="260"></el-table-column>
       <el-table-column prop="leader" label="负责人" :formatter="userNicknameFormat" width="120"/>
-      <el-table-column prop="sort" label="排序" width="200"></el-table-column>
+      <el-table-column label="部门类别" align="center" prop="category">
+        <template slot-scope="scope">
+          <dict-tag :type="DICT_TYPE.SYSTEM_COMPANY_CATEGORY" :value="scope.row.category" />
+        </template>
+      </el-table-column>
+      <el-table-column prop="company" label="所属会社" :formatter="companyNameFormat" width="250" />
+      <el-table-column prop="sort" label="排序" width="100"></el-table-column>
       <el-table-column prop="status" label="状态" width="100">
         <template slot-scope="scope">
           <dict-tag :type="DICT_TYPE.COMMON_STATUS" :value="scope.row.status"/>
@@ -68,6 +79,37 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item label="部门状态" prop="status">
+              <el-radio-group v-model="form.status">
+                <el-radio v-for="dict in statusDictDatas" :key="parseInt(dict.value)" :label="parseInt(dict.value)">
+                  {{dict.label}}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="部门类别" prop="category">
+              <el-select v-model="form.category" placeholder="请选择部门类别">
+                <el-option v-for="dict in companyDictDatas"
+                           :key="dict.value" :label="dict.label" :value="dict.value" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="所属会社" prop="company">
+              <el-select v-model="form.company" placeholder="请选择所属会社" clearable>
+                <div v-if="form.category == 1">
+                  <el-option v-for="item in companys" :key="parseInt(item.id)" :label="item.nameJp" :value="parseInt(item.id)" />
+                </div>
+                <div v-else-if="form.category == 2">
+                  <el-option value="2" />
+                </div>
+                <div v-else>
+                  <el-option value="null" />
+                </div>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="显示排序" prop="sort">
               <el-input-number v-model="form.sort" controls-position="right" :min="0" />
             </el-form-item>
@@ -89,14 +131,6 @@
               <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="部门状态" prop="status">
-              <el-radio-group v-model="form.status">
-                <el-radio v-for="dict in statusDictDatas" :key="parseInt(dict.value)" :label="parseInt(dict.value)">
-                  {{dict.label}}</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -109,6 +143,7 @@
 
 <script>
 import { listDept, getDept, delDept, addDept, updateDept } from "@/api/system/dept";
+import {getCompanyPage, listCompany} from "@/api/system/company";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
@@ -131,6 +166,8 @@ export default {
       deptOptions: [],
       // 用户下拉列表
       users: [],
+      // 会社列表
+      companys: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -146,6 +183,7 @@ export default {
       // 查询参数
       queryParams: {
         name: undefined,
+        category: undefined,
         status: undefined
       },
       // 表单参数
@@ -174,13 +212,17 @@ export default {
         ],
         status: [
           { required: true, message: "状态不能为空", trigger: "blur" }
+        ],
+        category: [
+          { required: true, message: "部门类别不能为空" }
         ]
       },
 
       // 枚举
       CommonStatusEnum: CommonStatusEnum,
       // 数据字典
-      statusDictDatas: getDictDatas(DICT_TYPE.COMMON_STATUS)
+      statusDictDatas: getDictDatas(DICT_TYPE.COMMON_STATUS),
+      companyDictDatas: getDictDatas(DICT_TYPE.SYSTEM_COMPANY_CATEGORY)
     };
   },
   created() {
@@ -188,6 +230,10 @@ export default {
     // 获得用户列表
     listSimpleUsers().then(response => {
       this.users = response.data;
+    });
+    // 获得会社列表
+    listCompany().then(response => {
+      this.companys = response.data;
     });
   },
   methods: {
@@ -222,6 +268,18 @@ export default {
       }
       return '未知【' + row.leaderUserId + '】';
     },
+    // 会社名称展示
+    companyNameFormat(row, column) {
+      if (!row.company) {
+        return '未设置';
+      }
+      for (const company of this.companys) {
+        if (row.company == company.id) {
+          return company.nameJp;
+        }
+      }
+      return '未知【' + row.company + '】';
+    },
     // 取消按钮
     cancel() {
       this.open = false;
@@ -238,6 +296,8 @@ export default {
         phone: undefined,
         email: undefined,
         status: CommonStatusEnum.ENABLE,
+        category: undefined,
+        company: undefined,
       };
       this.resetForm("form");
     },

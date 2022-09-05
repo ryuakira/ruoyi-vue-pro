@@ -60,5 +60,12 @@ public class DeptDO extends BaseDO {
      * 枚举 {@link CommonStatusEnum}
      */
     private Integer status;
+    /**
+     * 部门类别
+     *
+     * 枚举 {@link TODO system_company_category 对应的类}
+     */
+    private String category;
 
+    private String company;
 }

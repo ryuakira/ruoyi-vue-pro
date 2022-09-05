@@ -44,4 +44,10 @@ public class DeptBaseVO {
 //    @InEnum(value = CommonStatusEnum.class, message = "修改状态必须是 {value}")
     private Integer status;
 
+    @ApiModelProperty(value = "部门类别")
+    private String category;
+
+    @ApiModelProperty(value = "所属会社")
+    private String company;
+
 }

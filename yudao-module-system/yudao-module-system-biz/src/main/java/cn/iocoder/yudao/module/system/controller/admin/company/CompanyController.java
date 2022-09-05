@@ -97,4 +97,11 @@ public class CompanyController {
         ExcelUtils.write(response, "会社.xls", "数据", CompanyExcelVO.class, datas);
     }
 
+    @GetMapping("/list-all-simple")
+    @ApiOperation(value = "获取精简信息列表", notes = "主要用于前端的下拉选项")
+    public CommonResult<List<CompanyExcelVO>> getSimpleCompany(@Valid CompanyExportReqVO exportReqVO) {
+        List<CompanyDO> list = companyService.getCompanyList(exportReqVO);
+        return success(CompanyConvert.INSTANCE.convertList02(list));
+    }
+
 }
