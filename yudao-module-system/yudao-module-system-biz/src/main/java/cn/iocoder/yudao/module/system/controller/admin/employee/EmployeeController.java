@@ -1,18 +1,16 @@
 package cn.iocoder.yudao.module.system.controller.admin.employee;
 
-import cn.iocoder.yudao.module.system.controller.admin.dept.vo.dept.DeptRespVO;
-import cn.iocoder.yudao.module.system.convert.dept.DeptConvert;
+import cn.hutool.core.io.IoUtil;
+import cn.iocoder.yudao.module.infra.service.file.FileService;
 import cn.iocoder.yudao.module.system.dal.dataobject.dept.DeptDO;
-import cn.iocoder.yudao.module.system.dal.dataobject.worktime.WorktimeDO;
 import cn.iocoder.yudao.module.system.service.dept.DeptService;
-import cn.iocoder.yudao.module.system.service.dept.DeptServiceImpl;
+import lombok.Data;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.security.access.prepost.PreAuthorize;
 import io.swagger.annotations.*;
 
-import javax.validation.constraints.*;
 import javax.validation.*;
 import javax.servlet.http.*;
 import java.text.SimpleDateFormat;
@@ -34,6 +32,7 @@ import cn.iocoder.yudao.module.system.controller.admin.employee.vo.*;
 import cn.iocoder.yudao.module.system.dal.dataobject.employee.EmployeeDO;
 import cn.iocoder.yudao.module.system.convert.employee.EmployeeConvert;
 import cn.iocoder.yudao.module.system.service.employee.EmployeeService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = "管理后台 - 社員")
 @RestController
@@ -46,7 +45,8 @@ public class EmployeeController {
 
     @Resource
     private DeptService deptService;
-
+    @Resource
+    private FileService fileService;
     @PostMapping("/create")
     @ApiOperation("创建社員")
     @PreAuthorize("@ss.hasPermission('system:employee:create')")
@@ -140,5 +140,19 @@ public class EmployeeController {
 
         return employeeNum.toString();
     }
-    // 2022/09/03 社員番号の採番処理　終了Ï
+    // 2022/09/03 社員番号の採番処理　終了
+
+    @PostMapping("/upload")
+    @ApiOperation("上传社員照片/在留卡复印件")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file", value = "社員照片/在留卡复印件附件", required = true, dataTypeClass = MultipartFile.class),
+            @ApiImplicitParam(name = "path", value = "社員照片/在留卡复印件路径", example = "yudaoyuanma.png", dataTypeClass = String.class)
+    })
+    @OperateLog(logArgs = false) // 上传文件，没有记录操作日志的必要
+    public CommonResult<String> uploadFile(@RequestParam("file") MultipartFile file,
+                                                   @RequestParam(value = "path", required = false) String path) throws Exception {
+
+        String fileUrl = fileService.createFile(file.getOriginalFilename(), path, IoUtil.readBytes(file.getInputStream()));
+        return success(fileUrl);
+    }
 }

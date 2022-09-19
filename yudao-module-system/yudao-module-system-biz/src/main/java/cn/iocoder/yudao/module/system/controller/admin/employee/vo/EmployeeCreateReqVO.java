@@ -11,12 +11,12 @@ import javax.validation.constraints.*;
 @ToString(callSuper = true)
 public class EmployeeCreateReqVO extends EmployeeBaseVO {
 
-//    @ApiModelProperty(value = "画像URL", required = true)
+    @ApiModelProperty(value = "画像URL", required = true)
 //    @NotNull(message = "画像URL不能为空")
-//    private String avatar;
+    private String avatar;
 //
-//    @ApiModelProperty(value = "在留カード番号コピー", required = true)
+    @ApiModelProperty(value = "在留カード番号コピー", required = true)
 //    @NotNull(message = "在留カード番号コピー不能为空")
-//    private String resideceCardCopy;
+    private String resideceCardCopy;
 
 }
