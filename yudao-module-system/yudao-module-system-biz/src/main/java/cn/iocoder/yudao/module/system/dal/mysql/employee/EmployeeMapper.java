@@ -5,6 +5,7 @@ import java.util.*;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
+import cn.iocoder.yudao.module.system.controller.admin.worktime.vo.WorktimeRespVO;
 import cn.iocoder.yudao.module.system.dal.dataobject.employee.EmployeeDO;
 import org.apache.ibatis.annotations.Mapper;
 import cn.iocoder.yudao.module.system.controller.admin.employee.vo.*;
@@ -17,6 +18,9 @@ import cn.iocoder.yudao.module.system.controller.admin.employee.vo.*;
 @Mapper
 public interface EmployeeMapper extends BaseMapperX<EmployeeDO> {
 
+    /* */
+    int insertRetrunId(EmployeeDO employeeDO);
+    long returnMaxId();
     default PageResult<EmployeeDO> selectPage(EmployeePageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<EmployeeDO>()
                 .eqIfPresent(EmployeeDO::getEmployeeNum, reqVO.getEmployeeNum())

@@ -9,4 +9,54 @@
         文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
      -->
 
+    <!--suppress MybatisXMapperXmlInspection -->
+    <insert id="insertRetrunId"  parameterType="EmployeeDo">
+        INSERT INTO system_tecreas_employee
+        (employee_num,
+         employee_name,
+         employee_name_kana,
+         avatar,
+         sex,
+         birthday,
+         residece_card_id,
+         residece_card_copy,
+         mynumber_card_id,
+         emply_cntrct_numbr,
+         mobile,
+         postcode,
+         address,
+         resume,
+         dept_id,
+         hire_date,
+         status
+         )
+        VALUES
+         concat("T","0009","20220903"),
+         #{employeeName},
+         #{employeeNameKana},
+         #{avatar},
+         #{sex},
+         #{birthday},
+         #{resideceCardId},
+         #{resideceCardCopy},
+         #{mynumberCardId},
+         #{emplyCntrctNumbr},
+         #{mobile},
+         #{postcode},
+         #{address},
+         #{resume},
+         #{deptId},
+         #{hireDate},
+         #{status}
+        )
+        <selectKey resultType="int" keyProperty="employeeNum" order="AFTER">
+         select @@IDENTIFY
+        </selectKey>
+    </insert>
+
+    <select id="returnMaxId" resultType="long" >
+        select max(id) from system_tecreas_employee;
+--         select last_insert_id() + 1 from system_tecreas_employee;
+    </select>
+
 </mapper>

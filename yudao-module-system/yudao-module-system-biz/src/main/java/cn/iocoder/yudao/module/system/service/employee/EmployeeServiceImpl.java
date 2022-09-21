@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.system.service.employee;
 
+import org.apache.ibatis.jdbc.Null;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -31,6 +32,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Long createEmployee(EmployeeCreateReqVO createReqVO) {
         // 插入
         EmployeeDO employee = EmployeeConvert.INSTANCE.convert(createReqVO);
+
+        // 去执行我在EmployeeMapper.xml里指定的INSERT文 ----2022/09/03
+        //employeeMapper.insertRetrunId(employee);
+        //long intId = employee.getId();
         employeeMapper.insert(employee);
         // 返回
         return employee.getId();
@@ -93,5 +98,16 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<EmployeeDO> getEmployeeListByStatus(Integer status) {
         return employeeMapper.selectListByStatus(status);
+    }
+
+    @Override
+    public Long getEmployeeMaxId() {
+        long maxId;
+        try {
+            maxId = employeeMapper.returnMaxId() + 1;
+        } catch (Exception e) {
+            maxId = 1;
+        }
+        return maxId;
     }
 }

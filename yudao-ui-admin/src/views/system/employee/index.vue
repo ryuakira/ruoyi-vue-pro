@@ -18,21 +18,21 @@
                      :key="dict.value" :label="dict.label" :value="dict.value"/>
         </el-select>
       </el-form-item>
-      <el-form-item label="年月日" prop="birthday">
+      <el-form-item label="生年月日" prop="birthday">
         <el-date-picker clearable v-model="queryParams.birthday" type="date" placeholder="选择年月日" />
       </el-form-item>
-      <el-form-item label="在留カード番号" prop="resideceCardId">
-        <el-input v-model="queryParams.resideceCardId" placeholder="请输入在留カード番号" clearable @keyup.enter.native="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="マイナンバーカード番号" prop="mynumberCardId">
-        <el-input v-model="queryParams.mynumberCardId" placeholder="请输入マイナンバーカード番号" clearable @keyup.enter.native="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="雇用契約番号" prop="emplyCntrctNumbr">
-        <el-input v-model="queryParams.emplyCntrctNumbr" placeholder="请输入雇用契約番号" clearable @keyup.enter.native="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="携帯番号" prop="mobile">
-        <el-input v-model="queryParams.mobile" placeholder="请输入携帯番号" clearable @keyup.enter.native="handleQuery"/>
-      </el-form-item>
+<!--      <el-form-item label="在留カード番号" prop="resideceCardId">-->
+<!--        <el-input v-model="queryParams.resideceCardId" placeholder="请输入在留カード番号" clearable @keyup.enter.native="handleQuery"/>-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="マイナンバーカード番号" prop="mynumberCardId">-->
+<!--        <el-input v-model="queryParams.mynumberCardId" placeholder="请输入マイナンバーカード番号" clearable @keyup.enter.native="handleQuery"/>-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="雇用契約番号" prop="emplyCntrctNumbr">-->
+<!--        <el-input v-model="queryParams.emplyCntrctNumbr" placeholder="请输入雇用契約番号" clearable @keyup.enter.native="handleQuery"/>-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="携帯番号" prop="mobile">-->
+<!--        <el-input v-model="queryParams.mobile" placeholder="请输入携帯番号" clearable @keyup.enter.native="handleQuery"/>-->
+<!--      </el-form-item>-->
       <el-form-item label="郵便番号" prop="postcode">
         <el-input v-model="queryParams.postcode" placeholder="请输入郵便番号" clearable @keyup.enter.native="handleQuery"/>
       </el-form-item>
@@ -48,10 +48,8 @@
       </el-form-item>
       <el-form-item label="就職状態" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择就職状態" clearable size="small">
-          <el-select v-model="queryParams.sex" placeholder="请选择社員性别" clearable size="small">
             <el-option v-for="dict in this.getDictDatas(DICT_TYPE.SYSTEM_EMPLOYEE_STATUS)"
                        :key="dict.value" :label="dict.label" :value="dict.value"/>
-          </el-select>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -75,18 +73,24 @@
 
     <!-- 列表 -->
     <el-table v-loading="loading" :data="list">
-      <el-table-column label="ID" align="center" prop="id" />
+<!--      <el-table-column label="ID" align="center" prop="id" />-->
       <el-table-column label="社員番号" align="center" prop="employeeNum" />
       <el-table-column label="姓名" align="center" prop="employeeName" />
       <el-table-column label="姓名カナ" align="center" prop="employeeNameKana" />
-      <el-table-column label="性别" align="center" prop="sex" />
-      <el-table-column label="年月日" align="center" prop="birthday" width="180" >
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.birthday) }}</span>
-        </template>
+      <el-table-column label="性别" align="center" prop="sex"/>
+
+      <el-table-column label="生年月日" align="center" prop="birthday" :formatter="dateFormat" width="180" >
       </el-table-column>
       <el-table-column label="在留カード番号" align="center" prop="resideceCardId" />
       <el-table-column label="マイナンバーカード番号" align="center" prop="mynumberCardId" />
+      <el-table-column label="下载" align="center" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button v-if="scope.row.avatar != null" size="mini" type="text" @click="imgDownload(scope.row.avatar)"
+                     v-hasPermi="['system:employee:update']">员工照片</el-button>
+          <el-button v-if="scope.row.resideceCardCopy != null" size="mini" type="text" @click="imgDownload(scope.row.resideceCardCopy)"
+                     v-hasPermi="['system:employee:update']">在留卡复印</el-button>
+        </template>
+      </el-table-column>
       <el-table-column label="雇用契約番号" align="center" prop="emplyCntrctNumbr" />
       <el-table-column label="携帯番号" align="center" prop="mobile" />
       <el-table-column label="郵便番号" align="center" prop="postcode" />
@@ -136,17 +140,20 @@
             <el-form-item label="姓名カナ" prop="employeeNameKana">
               <el-input v-model="form.employeeNameKana" placeholder="请输入姓名カナ" />
             </el-form-item>
-            <el-form-item label="画像URL" prop="avatar">
-              <el-input v-model="form.avatar" placeholder="请输入画像URL" />
+            <el-form-item label="照片" prop="">
+                <el-image v-if="form.avatar != null" :src="form.avatar" style="width:110px; height:150px"/>
+                <tr></tr>
+                <el-button type="primary" @click="handleUpload(1)">上传照片</el-button>
+                <el-input v-model="form.avatar" placeholder="点击下面按钮上传照片" type="hidden" />
             </el-form-item>
             <el-form-item label="性别" prop="sex">
               <el-select v-model="form.sex" placeholder="请选择">
                 <el-option v-for="dict in this.getDictDatas(DICT_TYPE.SYSTEM_USER_SEX)"
                            :key="parseInt(dict.value)" :label="dict.label" :value="parseInt(dict.value)"/>
               </el-select>
-            </el-form-item>
-            <el-form-item label="年月日" prop="birthday">
-              <el-date-picker clearable v-model="form.birthday" type="date"  placeholder="选择年月日" />
+            </el-form-item>å
+            <el-form-item label="生年月日" prop="birthday">
+              <el-date-picker clearable v-model="form.birthday" type="date"  placeholder="选择年月日" value-format="yyyy-MM-dd" />
             </el-form-item>
             <el-form-item label="携帯番号" prop="mobile">
               <el-input v-model="form.mobile" placeholder="请输入携帯番号" />
@@ -163,9 +170,12 @@
             <el-form-item label="在留カード番号" prop="resideceCardId">
               <el-input v-model="form.resideceCardId" placeholder="请输入在留カード番号" />
             </el-form-item>
-            <el-form-item label="在留カード番号コピー" prop="resideceCardCopy">
-              <el-input v-model="form.resideceCardCopy" placeholder="请输入在留カード番号コピー" />
+            <el-form-item label="在留カードコピー" prop="resideceCardCopy">
+              <el-image v-if="form.resideceCardCopy != null" :src="form.resideceCardCopy" />
+              <el-button type="primary" @click="handleUpload(2)">上传在留卡复印件</el-button>
+              <el-input v-model="form.resideceCardCopy" placeholder="点击下面按钮上传在留卡复印件" type="hidden"/>
             </el-form-item>
+
             <el-form-item label="マイナンバーカード番号" prop="mynumberCardId">
               <el-input v-model="form.mynumberCardId" placeholder="请输入マイナンバーカード番号" />
             </el-form-item>
@@ -176,7 +186,6 @@
               <el-input v-model="form.resume" placeholder="请输入最新履歴" />
             </el-form-item>
             <el-form-item label="所属部门" prop="deptId">
-<!--              <el-input v-model="form.deptId" placeholder="请输入部門番号" />-->
               <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" :clearable="false"
                           placeholder="请选择所属部门" :normalizer="normalizer"/>
             </el-form-item>
@@ -197,14 +206,45 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+<!--  员工照片，在留卡复印件上传  -->
+    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
+      <el-upload ref="upload" :limit="1" accept=".jpg, .png, .gif, .jpeg" :auto-upload="false" drag
+                 :headers="upload.headers"
+                 :action="upload.url"
+                 :data="upload.data"
+                 :disabled="upload.isUploading"
+                 :on-change="handleFileChange"
+                 :on-progress="handleFileUploadProgress"
+                 :on-success="handleFileSuccess">
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">
+          将文件拖到此处，或 <em>点击上传</em>
+        </div>
+        <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入 jpg、png、gif 格式文件！</div>
+      </el-upload>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFileForm">确 定</el-button>
+        <el-button @click="upload.open = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { createEmployee, updateEmployee, deleteEmployee, getEmployee, getEmployeePage, exportEmployeeExcel } from "@/api/system/employee";
+import {
+  createEmployee,
+  updateEmployee,
+  deleteEmployee,
+  getEmployee,
+  getEmployeePage,
+  exportEmployeeExcel,
+} from "@/api/system/employee";
 import {listSimpleDepts} from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import moment from "moment";
+import {getAccessToken} from "@/utils/auth";
 export default {
   name: "Employee",
   components: { Treeselect
@@ -230,6 +270,9 @@ export default {
       // 是否显示弹出层
       open: false,
       dateRangeHireDate: [],
+      // 上传按钮flg（上传员工照片：1， 上传在留卡复印件：2）
+      uploadFlg: null,
+      fileList:[],
       // 查询参数
       queryParams: {
         pageNo: 1,
@@ -255,17 +298,26 @@ export default {
         // EmployeeNum: [{ required: true, message: "社員番号不能为空", trigger: "blur" }],
         employeeName: [{ required: true, message: "姓名不能为空", trigger: "blur" }],
         employeeNameKana: [{ required: true, message: "姓名カナ不能为空", trigger: "blur" }],
-        avatar: [{ required: true, message: "画像URL不能为空", trigger: "blur" }],
+        // avatar: [{ required: true, message: "画像URL不能为空", trigger: "blur" }],
         sex: [{ required: true, message: "性别不能为空", trigger: "change" }],
         birthday: [{ required: true, message: "年月日不能为空", trigger: "blur" }],
         resideceCardId: [{ required: true, message: "在留カード番号不能为空", trigger: "blur" }],
-        resideceCardCopy: [{ required: true, message: "在留カード番号コピー不能为空", trigger: "blur" }],
+        // resideceCardCopy: [{ required: true, message: "在留カード番号コピー不能为空", trigger: "blur" }],
         mobile: [{ required: true, message: "携帯番号不能为空", trigger: "blur" }],
         address: [{ required: true, message: "住所不能为空", trigger: "blur" }],
         deptId: [{ required: true, message: "所属部門不能为空", trigger: "change" }],
         hireDate: [{ required: true, message: "入社日不能为空", trigger: "blur" }],
         status: [{ required: true, message: "就只状态不能为空", trigger: "change" }],
-      }
+      },
+      upload: {
+        open: false, // 是否显示弹出层
+        title: "", // 弹出层标题
+        isUploading: false, // 是否禁用上传
+        // url: process.env.VUE_APP_BASE_API + "/admin-api/infra/file/upload", // 请求地址
+        url: process.env.VUE_APP_BASE_API + "/admin-api/system/employee/upload", // 请求地址
+        headers: { Authorization: "Bearer " + getAccessToken() }, // 设置上传的请求头部
+        data: {} // 上传的额外数据，用于文件名
+      },
     };
   },
   created() {
@@ -295,7 +347,7 @@ export default {
         // 处理 deptOptions 参数
         this.deptOptions = [];
         this.deptOptions.push(...this.handleTree(response.data, "id"));
-        console.log("depOptions.size = ====" + this.deptOptions.length);
+        // console.log("depOptions.size = ====" + this.deptOptions.length);
       });
     },
     /** 取消按钮 */
@@ -374,6 +426,54 @@ export default {
       // console.log(row.EmployeeNum + "------");
       // this.$router.push({ path: "/system/worktime" });
     },
+    /** 2022/09/05 日期时间格式化处理  刘义民 手动追加
+     *  format日付　YYYY-MM-DD
+     *　时间格式化使用moent.js
+     *　如果开发环境里没有moent.js，需要依次执行下列命令↓
+     *                      「cd yudao-ui-admin」
+     *                      「npm install moment --save」
+     *                      「yarn add moment」
+     *  同时在该index.vue里import moment from "moment";
+     * */
+    dateFormat:function (row,column){
+      var date = row[column.property];
+      if (date === undefined) {
+        return "";
+      }
+      return moment(date).format("YYYY-MM-DD");
+    },
+    /** 上传按钮操作 */
+    handleUpload(flg) {
+      // 上传按钮flg（上传员工照片：1， 上传在留卡复印件：2）
+      this.uploadFlg = flg;
+      this.upload.open = true;
+      this.upload.title = "上传文件";
+    },
+    /** 处理上传的文件发生变化 */
+    handleFileChange(file, fileList) {
+
+    },
+    /** 处理文件上传中 */
+    handleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true; // 禁止修改
+    },
+    /** 发起文件上传 */
+    submitFileForm() {
+      this.$refs.upload.submit();
+    },
+    /** 文件上传成功处理 */
+    handleFileSuccess(response, file, fileList) {
+      // 清理
+      this.upload.open = false;
+      this.upload.isUploading = false;
+      this.$refs.upload.clearFiles();
+      // 提示成功，并刷新
+      // this.$modal.msgSuccess("上传成功");
+      // 上传照片按钮按下时，赋值照片的url
+      if (this.uploadFlg == 1) this.form.avatar = response.data;
+      // 上传在留卡复印件按钮按下时，赋值在留卡复印件的url
+      if (this.uploadFlg == 2) this.form.resideceCardCopy = response.data;
+    },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
@@ -408,6 +508,13 @@ export default {
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
+    /** 员工照片/在留卡复印件 下载 */
+    imgDownload(url) {
+      const a = document.createElement('a')
+      a.download = name
+      a.href = url
+      a.click()
+    },
     /** 导出按钮操作 */
     handleExport() {
       // 处理查询参数
@@ -435,4 +542,3 @@ export default {
   }
 };
 </script>
-

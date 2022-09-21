@@ -83,18 +83,47 @@
         <el-form-item label="稼働時間" prop="workingtimes">
           <el-input v-model="form.workingtimes" placeholder="请输入稼働時間" />
         </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleUploadExcel">
+            <Icon icon="ep:upload" class="mr-5px" /> 上传本月考勤文件
+          </el-button>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+<!--  上传考勤对话框  -->
+    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
+      <el-upload ref="upload" :limit="1" accept=".xlsx, .xls" :headers="upload.headers"
+                 :action="upload.url + '?updateSupport=' + upload.updateSupport" :disabled="upload.isUploading"
+                 :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :auto-upload="false" drag>
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <div class="el-upload__tip text-center" slot="tip">
+          <div class="el-upload__tip" slot="tip">
+            <el-checkbox v-model="upload.updateSupport" /> 是否更新已经存在的考勤数据
+          </div>
+          <span>仅允许导入xls、xlsx格式文件。</span>
+          <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
+        </div>
+      </el-upload>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFileForm">确 定</el-button>
+        <el-button @click="upload.open = false">取 消</el-button>
+      </div>
+    </el-dialog>
+
+
   </div>
 </template>
 
 <script>
 import { createWorktime, updateWorktime, deleteWorktime, getWorktime, getWorktimePage, exportWorktimeExcel } from "@/api/system/worktime";
 import { listSimpleEmployee } from "@/api/system/employee";
+import {importTemplate} from "@/api/system/user";
+import {getBaseHeader} from "@/utils/request";
 
 export default {
   name: "Worktime",
@@ -130,6 +159,23 @@ export default {
         workingMonth: null,
         workingtimes: null,
       },
+      // 上传考勤文件（Excel）
+      upload: {
+        // 是否显示弹出层（上传考勤）
+        open: false,
+        // 弹出层标题（上传考勤）
+        title: "",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的用户数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: getBaseHeader(),
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + '/admin-api/system/user/import'
+      },
+      // 文件上传到文件服务器上后返回的文件路径
+      // returnUrlPath,
       // 表单参数
       form: {},
       // 表单校验
@@ -257,6 +303,51 @@ export default {
           this.getList();
           this.$modal.msgSuccess("删除成功");
         }).catch(() => {});
+    },
+    /** 考勤上传按钮操作 劉義民　手動追加*/
+    handleUploadExcel() {
+      this.upload.title = "上传考勤";
+      this.upload.open = true;
+    },
+    /** 下载考勤模板操作 劉義民　手動追加*/
+    importTemplate() {
+      importTemplate().then(response => {
+        this.$download.excel(response, '勤怠（自分の名前）模板.xls');
+      });
+    },
+    // 文件上传中处理
+    handleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true;
+    },
+    // 文件上传成功处理
+    handleFileSuccess(response, file, fileList) {
+      if (response.code !== 0) {
+        this.$modal.msgError(response.msg)
+        return;
+      }
+      this.upload.open = false;
+      this.upload.isUploading = false;
+      this.$refs.upload.clearFiles();
+      // 拼接提示语
+      let data = response.data;
+      let text = '创建成功数量：' + data.createUsernames.length;
+      for (const username of data.createUsernames) {
+        text += '<br />&nbsp;&nbsp;&nbsp;&nbsp;' + username;
+      }
+      text += '<br />更新成功数量：' + data.updateUsernames.length;
+      for (const username of data.updateUsernames) {
+        text += '<br />&nbsp;&nbsp;&nbsp;&nbsp;' + username;
+      }
+      text += '<br />更新失败数量：' + Object.keys(data.failureUsernames).length;
+      for (const username in data.failureUsernames) {
+        text += '<br />&nbsp;&nbsp;&nbsp;&nbsp;' + username + '：' + data.failureUsernames[username];
+      }
+      this.$alert(text, "导入结果", { dangerouslyUseHTMLString: true });
+      this.getList();
+    },
+    // 提交上传文件
+    submitFileForm() {
+      this.$refs.upload.submit();
     },
     /** 导出按钮操作 */
     handleExport() {

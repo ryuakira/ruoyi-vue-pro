@@ -99,5 +99,7 @@ public interface EmployeeService {
         List<EmployeeDO> list = getEmployeeInfoList(iDs);
         return CollectionUtils.convertMap(list, EmployeeDO::getId);
     }
+
+    Long getEmployeeMaxId();
 // 2022/09/01 劉義民　社員番号で社員名前を取得処理　追加終了
 }
