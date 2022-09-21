@@ -1,5 +1,13 @@
 import request from '@/utils/request'
 
+// 查询顧客列表
+export function listCustomer() {
+  return request({
+    url: '/system/customer/list-all-simple',
+    method: 'get'
+  })
+}
+
 // 创建顧客
 export function createCustomer(data) {
   return request({

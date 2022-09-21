@@ -1,5 +1,9 @@
 package cn.iocoder.yudao.module.system.controller.admin.customer;
 
+import cn.iocoder.yudao.module.system.controller.admin.company.vo.CompanyExcelVO;
+import cn.iocoder.yudao.module.system.controller.admin.company.vo.CompanyExportReqVO;
+import cn.iocoder.yudao.module.system.convert.company.CompanyConvert;
+import cn.iocoder.yudao.module.system.dal.dataobject.company.CompanyDO;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -95,6 +99,13 @@ public class CustomerController {
         // 导出 Excel
         List<CustomerExcelVO> datas = CustomerConvert.INSTANCE.convertList02(list);
         ExcelUtils.write(response, "顧客.xls", "数据", CustomerExcelVO.class, datas);
+    }
+
+    @GetMapping("/list-all-simple")
+    @ApiOperation(value = "获取精简信息列表", notes = "主要用于前端的下拉选项")
+    public CommonResult<List<CustomerExcelVO>> getSimpleCustomer(@Valid CustomerExportReqVO exportReqVO) {
+        List<CustomerDO> list = customerService.getCustomerList(exportReqVO);
+        return success(CustomerConvert.INSTANCE.convertList02(list));
     }
 
 }

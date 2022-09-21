@@ -11,7 +11,8 @@
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="菜单状态" clearable>
-          <el-option v-for="dict in statusDictDatas" :key="parseInt(dict.value)" :label="dict.label" :value="parseInt(dict.value)"/>
+          <el-option v-for="dict in statusDictDatas" :key="parseInt(dict.value)" :label="dict.label"
+                     :value="parseInt(dict.value)"/>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -23,7 +24,8 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
-                   v-hasPermi="['system:dept:create']">新增</el-button>
+                   v-hasPermi="['system:dept:create']">新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="info" plain icon="el-icon-sort" size="mini" @click="toggleExpandAll">展开/折叠</el-button>
@@ -35,12 +37,14 @@
               :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
       <el-table-column prop="name" label="部门名称" width="260"></el-table-column>
       <el-table-column prop="leader" label="负责人" :formatter="userNicknameFormat" width="120"/>
-      <el-table-column label="部门类别" align="center" prop="category">
+      <el-table-column label="部门类别" align="center" prop="category" width="100">
         <template slot-scope="scope">
-          <dict-tag :type="DICT_TYPE.SYSTEM_COMPANY_CATEGORY" :value="scope.row.category" />
+          <dict-tag :type="DICT_TYPE.SYSTEM_COMPANY_CATEGORY" :value="scope.row.category"/>
         </template>
       </el-table-column>
-      <el-table-column prop="company" label="所属会社" :formatter="companyNameFormat" width="250" />
+      <el-table-column prop="company" label="所属会社" width="250" />
+<!--      <el-table-column v-if="!queryParams.parentId" prop="company" label="所属会社" width="250"/>-->
+<!--      <el-table-column v-else-if="queryParams.parentId" prop="company" label="所属会社" width="250"/>-->
       <el-table-column prop="sort" label="排序" width="100"></el-table-column>
       <el-table-column prop="status" label="状态" width="100">
         <template slot-scope="scope">
@@ -55,11 +59,14 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
-                     v-hasPermi="['system:dept:update']">修改</el-button>
+                     v-hasPermi="['system:dept:update']">修改
+          </el-button>
           <el-button size="mini" type="text" icon="el-icon-plus" @click="handleAdd(scope.row)"
-                     v-hasPermi="['system:dept:create']">新增</el-button>
+                     v-hasPermi="['system:dept:create']">新增
+          </el-button>
           <el-button v-if="scope.row.parentId !== 0" size="mini" type="text" icon="el-icon-delete"
-                     @click="handleDelete(scope.row)" v-hasPermi="['system:dept:delete']">删除</el-button>
+                     @click="handleDelete(scope.row)" v-hasPermi="['system:dept:delete']">删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -70,65 +77,82 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="上级部门" prop="parentId">
-              <treeselect v-model="form.parentId" :options="deptOptions" :normalizer="normalizer" placeholder="选择上级部门" />
+              <treeselect v-model="form.parentId" :options="deptOptions" :normalizer="normalizer"
+                          placeholder="选择上级部门"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="部门名称" prop="name">
-              <el-input v-model="form.name" placeholder="请输入部门名称" />
+              <el-input v-model="form.name" placeholder="请输入部门名称"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="部门状态" prop="status">
               <el-radio-group v-model="form.status">
                 <el-radio v-for="dict in statusDictDatas" :key="parseInt(dict.value)" :label="parseInt(dict.value)">
-                  {{dict.label}}</el-radio>
+                  {{ dict.label }}
+                </el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="部门类别" prop="category">
-              <el-select v-model="form.category" placeholder="请选择部门类别">
-                <el-option v-for="dict in companyDictDatas"
-                           :key="dict.value" :label="dict.label" :value="dict.value" />
-              </el-select>
+              <div v-if="!form.parentId">
+                <el-select v-model="form.category" placeholder="请选择部门类别">
+                  <el-option v-for="dict in companyDictDatas"
+                             :key="dict.value" :label="dict.label" :value="dict.value"/>
+                </el-select>
+              </div>
+              <div v-else>
+                <el-select placeholder="子部门无法选择类别" disabled/>
+              </div>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="所属会社" prop="company">
-              <el-select v-model="form.company" placeholder="请选择所属会社" clearable>
-                <div v-if="form.category == 1">
-                  <el-option v-for="item in companys" :key="parseInt(item.id)" :label="item.nameJp" :value="parseInt(item.id)" />
+              <div v-if="!form.parentId">
+                <div v-if="parseInt(form.category) === 1">
+                  <el-select v-model="form.company" placeholder="请选择所属会社" clearable>
+                    <el-option v-for="item in companys" :key="parseInt(item.id)" :label="item.nameJp"
+                               :value="item.nameJp"/>
+                  </el-select>
                 </div>
-                <div v-else-if="form.category == 2">
-                  <el-option value="2" />
+                <div v-else-if="parseInt(form.category) === 2">
+                  <el-select v-model="form.company" placeholder="请选择所属会社" clearable>
+                    <el-option v-for="item in customers" :key="parseInt(item.id)" :label="item.name1"
+                               :value="item.name1"/>
+                  </el-select>
                 </div>
                 <div v-else>
-                  <el-option value="null" />
+                  <el-select placeholder="请先选择部门类别" disabled/>
                 </div>
-              </el-select>
+              </div>
+              <div v-else>
+                <el-select placeholder="子部门无法选择所属会社" disabled/>
+              </div>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="显示排序" prop="sort">
-              <el-input-number v-model="form.sort" controls-position="right" :min="0" />
+              <el-input-number v-model="form.sort" controls-position="right" :min="0"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="负责人" prop="leaderUserId">
               <el-select v-model="form.leaderUserId" placeholder="请输入负责人" clearable style="width: 100%">
-                <el-option v-for="item in users" :key="parseInt(item.id)" :label="item.nickname" :value="parseInt(item.id)" />
+                <el-option v-for="item in users" :key="parseInt(item.id)" :label="item.nickname"
+                           :value="parseInt(item.id)"/>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="联系电话" prop="phone">
-              <el-input v-model="form.phone" placeholder="请输入联系电话" maxlength="11" />
+              <el-input v-model="form.phone" placeholder="请输入联系电话" maxlength="11"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
+              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -142,18 +166,19 @@
 </template>
 
 <script>
-import { listDept, getDept, delDept, addDept, updateDept } from "@/api/system/dept";
+import {listDept, getDept, delDept, addDept, updateDept} from "@/api/system/dept";
 import {getCompanyPage, listCompany} from "@/api/system/company";
+import {getCustomerPage, listCustomer} from "@/api/system/customer";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 import {CommonStatusEnum} from '@/utils/constants'
-import { getDictDatas, DICT_TYPE } from '@/utils/dict'
+import {getDictDatas, DICT_TYPE} from '@/utils/dict'
 import {listSimpleUsers} from "@/api/system/user";
 
 export default {
   name: "Dept",
-  components: { Treeselect },
+  components: {Treeselect},
   data() {
     return {
       // 遮罩层
@@ -168,6 +193,8 @@ export default {
       users: [],
       // 会社列表
       companys: [],
+      // 顧客列表
+      customers: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -191,10 +218,10 @@ export default {
       // 表单校验
       rules: {
         name: [
-          { required: true, message: "部门名称不能为空", trigger: "blur" }
+          {required: true, message: "部门名称不能为空", trigger: "blur"}
         ],
         sort: [
-          { required: true, message: "显示排序不能为空", trigger: "blur" }
+          {required: true, message: "显示排序不能为空", trigger: "blur"}
         ],
         email: [
           {
@@ -211,11 +238,8 @@ export default {
           }
         ],
         status: [
-          { required: true, message: "状态不能为空", trigger: "blur" }
+          {required: true, message: "状态不能为空", trigger: "blur"}
         ],
-        category: [
-          { required: true, message: "部门类别不能为空" }
-        ]
       },
 
       // 枚举
@@ -234,6 +258,10 @@ export default {
     // 获得会社列表
     listCompany().then(response => {
       this.companys = response.data;
+    });
+    // 获得顧客列表
+    listCustomer().then(response => {
+      this.customers = response.data;
     });
   },
   methods: {
@@ -280,6 +308,18 @@ export default {
       }
       return '未知【' + row.company + '】';
     },
+    // 顧客名称展示
+    customerNameFormat(row, column) {
+      if (!row.customer) {
+        return '未设置';
+      }
+      for (const customer of this.customers) {
+        if (row.customer == customer.id) {
+          return customer.name3;
+        }
+      }
+      return '未知【' + row.customer + '】';
+    },
     // 取消按钮
     cancel() {
       this.open = false;
@@ -298,6 +338,7 @@ export default {
         status: CommonStatusEnum.ENABLE,
         category: undefined,
         company: undefined,
+        customer: undefined,
       };
       this.resetForm("form");
     },
@@ -319,7 +360,7 @@ export default {
       this.open = true;
       this.title = "添加部门";
       listDept().then(response => {
-	        this.deptOptions = this.handleTree(response.data, "id");
+        this.deptOptions = this.handleTree(response.data, "id");
       });
     },
     /** 展开/折叠操作 */
@@ -342,12 +383,13 @@ export default {
         this.title = "修改部门";
       });
       listDept(row.id).then(response => {
-	        this.deptOptions = this.handleTree(response.data, "id");
+        this.deptOptions = this.handleTree(response.data, "id");
       });
     },
     /** 提交按钮 */
-    submitForm: function() {
+    submitForm: function () {
       this.$refs["form"].validate(valid => {
+        console.log(this.form.company + "test");
         if (valid) {
           if (this.form.id !== undefined) {
             updateDept(this.form).then(response => {
@@ -367,12 +409,13 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      this.$modal.confirm('是否确认删除名称为"' + row.name + '"的数据项?').then(function() {
-          return delDept(row.id);
-        }).then(() => {
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal.confirm('是否确认删除名称为"' + row.name + '"的数据项?').then(function () {
+        return delDept(row.id);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("删除成功");
+      }).catch(() => {
+      });
     }
   }
 };
