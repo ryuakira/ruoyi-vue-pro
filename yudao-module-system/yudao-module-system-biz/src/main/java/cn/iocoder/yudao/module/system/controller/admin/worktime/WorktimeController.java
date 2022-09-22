@@ -1,6 +1,8 @@
 package cn.iocoder.yudao.module.system.controller.admin.worktime;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.io.IoUtil;
+import cn.iocoder.yudao.module.infra.service.file.FileService;
 import cn.iocoder.yudao.module.system.controller.admin.employee.vo.EmployeeRespVO;
 import cn.iocoder.yudao.module.system.controller.admin.user.vo.user.UserPageItemRespVO;
 import cn.iocoder.yudao.module.system.convert.employee.EmployeeConvert;
@@ -35,6 +37,7 @@ import cn.iocoder.yudao.module.system.controller.admin.worktime.vo.*;
 import cn.iocoder.yudao.module.system.dal.dataobject.worktime.WorktimeDO;
 import cn.iocoder.yudao.module.system.convert.worktime.WorktimeConvert;
 import cn.iocoder.yudao.module.system.service.worktime.WorktimeService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = "管理后台 - 勤怠")
 @RestController
@@ -46,6 +49,8 @@ public class WorktimeController {
     private WorktimeService worktimeService;
     @Resource
     private EmployeeService employeeService;
+    @Resource
+    private FileService fileService;
 
     @PostMapping("/create")
     @ApiOperation("创建勤怠")
@@ -127,4 +132,18 @@ public class WorktimeController {
         ExcelUtils.write(response, "勤怠.xls", "数据", WorktimeExcelVO.class, datas);
     }
 
+    @PostMapping("/upload-excel")
+    @ApiOperation("上传社員考勤文件（Excel）")
+    @PreAuthorize("@ss.hasPermission('system:worktime:updownloadexcel')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file", value = "社員考勤文件", required = true, dataTypeClass = MultipartFile.class),
+            @ApiImplicitParam(name = "path", value = "社員考勤文件路径", example = "yudaoyuanma.xls", dataTypeClass = String.class)
+    })
+    @OperateLog(logArgs = false) // 上传文件，没有记录操作日志的必要
+    public CommonResult<String> uploadFile(@RequestParam("file") MultipartFile file,
+                                           @RequestParam(value = "path", required = false) String path) throws Exception {
+
+        String fileUrl = fileService.createFile(file.getOriginalFilename(), path, IoUtil.readBytes(file.getInputStream()));
+        return success(fileUrl);
+    }
 }

@@ -18,4 +18,7 @@ public class WorktimeUpdateReqVO extends WorktimeBaseVO {
     @ApiModelProperty(value = "社員id主鍵")
     private Long employeeId;
 
+    @ApiModelProperty(value = "ExcelファイルURL")
+    private String wtFileUrl;
+
 }

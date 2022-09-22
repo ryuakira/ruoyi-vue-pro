@@ -144,6 +144,7 @@ public class EmployeeController {
 
     @PostMapping("/upload")
     @ApiOperation("上传社員照片/在留卡复印件")
+    @PreAuthorize("@ss.hasPermission('system:employee:updownload')")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "社員照片/在留卡复印件附件", required = true, dataTypeClass = MultipartFile.class),
             @ApiImplicitParam(name = "path", value = "社員照片/在留卡复印件路径", example = "yudaoyuanma.png", dataTypeClass = String.class)

@@ -15,6 +15,10 @@ public class WorktimeRespVO extends WorktimeBaseVO {
 
     @ApiModelProperty(value = "新規日付", required = true)
     private Date createTime;
+
+    @ApiModelProperty(value = "ExcelファイルURL")
+    private String wtFileUrl;
+
     // 2022/09/01 劉義民　社員番号で社員名前を取得処理　追加開始
     private Employee employee;
     @ApiModel("社員")

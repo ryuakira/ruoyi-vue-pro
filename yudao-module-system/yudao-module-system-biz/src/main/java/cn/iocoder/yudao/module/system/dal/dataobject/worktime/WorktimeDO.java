@@ -44,5 +44,9 @@ public class WorktimeDO extends BaseDO {
      * 稼働時間
      */
     private Float workingtimes;
+    /**
+     * 勤怠ファイルのUrl
+     */
+    private String wtFileUrl;
 
 }

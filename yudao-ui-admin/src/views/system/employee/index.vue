@@ -76,38 +76,40 @@
 <!--      <el-table-column label="ID" align="center" prop="id" />-->
       <el-table-column label="社員番号" align="center" prop="employeeNum" />
       <el-table-column label="姓名" align="center" prop="employeeName" />
-      <el-table-column label="姓名カナ" align="center" prop="employeeNameKana" />
-      <el-table-column label="性别" align="center" prop="sex"/>
-
-      <el-table-column label="生年月日" align="center" prop="birthday" :formatter="dateFormat" width="180" >
+      <el-table-column label="姓名カナ" align="center" prop="employeeNameKana" width="100"/>
+      <el-table-column label="性别" align="center" prop="sex" width="60"/>
+      <el-table-column label="生年月日" align="center" prop="birthday" :formatter="dateFormat" width="100" >
       </el-table-column>
       <el-table-column label="在留カード番号" align="center" prop="resideceCardId" />
-      <el-table-column label="マイナンバーカード番号" align="center" prop="mynumberCardId" />
-      <el-table-column label="下载" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="MyNumberNo." align="center" prop="mynumberCardId" width="120"/>
+      <el-table-column label="证件下载" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.avatar != null" size="mini" type="text" @click="imgDownload(scope.row.avatar)"
-                     v-hasPermi="['system:employee:update']">员工照片</el-button>
-          <el-button v-if="scope.row.resideceCardCopy != null" size="mini" type="text" @click="imgDownload(scope.row.resideceCardCopy)"
-                     v-hasPermi="['system:employee:update']">在留卡复印</el-button>
+          <!--   TODO 暂时忽略权限问题 v-hasPermi="['system:employee:updownload']" -->
+          <el-button v-if="scope.row.avatar != null" size="mini" type="text" icon="el-icon-download"
+                     @click="downloadFile(scope.row.avatar, scope.row.employeeName + '_写真')" >照片</el-button>
+          <el-button v-if="scope.row.resideceCardCopy != null" size="mini" type="text" icon="el-icon-download"
+                     @click="downloadFile(scope.row.resideceCardCopy, scope.row.employeeName + '_在留カード')" >在留卡</el-button>
         </template>
       </el-table-column>
       <el-table-column label="雇用契約番号" align="center" prop="emplyCntrctNumbr" />
       <el-table-column label="携帯番号" align="center" prop="mobile" />
       <el-table-column label="郵便番号" align="center" prop="postcode" />
       <el-table-column label="住所" align="center" prop="address" />
-      <el-table-column label="最新履歴" align="center" prop="resume" />
+      <el-table-column label="最新履歴下载" align="center" prop="resume" >
+        <template slot-scope="scope">
+          <!--   TODO 暂时忽略权限问题 v-hasPermi="['system:employee:updownload']" -->
+          <el-button v-if="scope.row.resume != null" size="mini" type="text" icon="el-icon-download"
+                     @click="downloadFile(scope.row.resume, scope.row.employeeName + '_履歴')" >下载履歴</el-button>
+        </template>
+      </el-table-column>
       <el-table-column label="勤怠情報" align="center" >
         <el-button size="mini" type="text" slot-scope="scope" @click="handleWorkTime(scope.row)"
                    v-hasPermi="['system:employee:update']">勤怠詳細
         </el-button>
       </el-table-column>
       <el-table-column label="所属部門" align="center" prop="deptId" />
-      <el-table-column label="入社日" align="center" prop="hireDate" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.hireDate) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="就職状態" align="center" prop="status" />
+      <el-table-column label="入社日"  :formatter="dateFormat" align="center" prop="hireDate" width="100"/>
+      <el-table-column label="就職状態" align="center" prop="status" width="80"/>
       <el-table-column label="新規日付" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -173,7 +175,7 @@
             <el-form-item label="在留カードコピー" prop="resideceCardCopy">
               <el-image v-if="form.resideceCardCopy != null" :src="form.resideceCardCopy" />
               <el-button type="primary" @click="handleUpload(2)">上传在留卡复印件</el-button>
-              <el-input v-model="form.resideceCardCopy" placeholder="点击下面按钮上传在留卡复印件" type="hidden"/>
+              <el-input v-model="form.resideceCardCopy" placeholder="点击下面按钮上传在留卡复印件"/>
             </el-form-item>
 
             <el-form-item label="マイナンバーカード番号" prop="mynumberCardId">
@@ -183,7 +185,8 @@
               <el-input v-model="form.emplyCntrctNumbr" placeholder="请输入雇用契約番号" />
             </el-form-item>
             <el-form-item label="最新履歴" prop="resume">
-              <el-input v-model="form.resume" placeholder="请输入最新履歴" />
+              <el-button type="primary" @click="handleUpload(3)">上传最新履歴</el-button>
+              <el-input v-model="form.resume" placeholder="点击下面按钮上传最新履歴" type="hidden"/>
             </el-form-item>
             <el-form-item label="所属部门" prop="deptId">
               <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" :clearable="false"
@@ -209,7 +212,7 @@
 
 <!--  员工照片，在留卡复印件上传  -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
-      <el-upload ref="upload" :limit="1" accept=".jpg, .png, .gif, .jpeg" :auto-upload="false" drag
+      <el-upload ref="upload" :limit="1" accept=".jpg, .png, .gif, .jpeg" :auto-upload="false" drag v-if="this.uploadFlg === 1 || this.uploadFlg === 2"
                  :headers="upload.headers"
                  :action="upload.url"
                  :data="upload.data"
@@ -222,6 +225,24 @@
           将文件拖到此处，或 <em>点击上传</em>
         </div>
         <div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入 jpg、png、gif 格式文件！</div>
+      </el-upload>
+<!--  员工最新学历上传  -->
+      <el-upload ref="upload" :limit="1" accept=".xlsx, .xls" :auto-upload="false" drag v-if="this.uploadFlg === 3"
+                 :headers="upload.headers"
+                 :action="upload.url"
+                 :data="upload.data"
+                 :disabled="upload.isUploading"
+                 :on-progress="handleFileUploadProgress"
+                 :on-success="handleFileSuccess">
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <div class="el-upload__tip text-center" slot="tip">
+          <div class="el-upload__tip" slot="tip">
+            <el-checkbox v-model="upload.updateSupport" /> 是否更新已经存在的考勤数据
+          </div>
+          <span>仅允许导入xls、xlsx格式文件。</span>
+          <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载简历模板</el-link>
+        </div>
       </el-upload>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitFileForm">确 定</el-button>
@@ -245,6 +266,7 @@ import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import moment from "moment";
 import {getAccessToken} from "@/utils/auth";
+import {importTemplate} from "@/api/system/user";
 export default {
   name: "Employee",
   components: { Treeselect
@@ -313,7 +335,6 @@ export default {
         open: false, // 是否显示弹出层
         title: "", // 弹出层标题
         isUploading: false, // 是否禁用上传
-        // url: process.env.VUE_APP_BASE_API + "/admin-api/infra/file/upload", // 请求地址
         url: process.env.VUE_APP_BASE_API + "/admin-api/system/employee/upload", // 请求地址
         headers: { Authorization: "Bearer " + getAccessToken() }, // 设置上传的请求头部
         data: {} // 上传的额外数据，用于文件名
@@ -442,6 +463,8 @@ export default {
       }
       return moment(date).format("YYYY-MM-DD");
     },
+
+    // ********文件上传处理 开始*********************************************************************************
     /** 上传按钮操作 */
     handleUpload(flg) {
       // 上传按钮flg（上传员工照片：1， 上传在留卡复印件：2）
@@ -473,7 +496,10 @@ export default {
       if (this.uploadFlg == 1) this.form.avatar = response.data;
       // 上传在留卡复印件按钮按下时，赋值在留卡复印件的url
       if (this.uploadFlg == 2) this.form.resideceCardCopy = response.data;
+      // 上传在留卡复印件按钮按下时，赋值在留卡复印件的url
+      if (this.uploadFlg == 3) this.form.resume = response.data;
     },
+    // ********文件上传处理 终了*********************************************************************************
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
@@ -508,13 +534,44 @@ export default {
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
-    /** 员工照片/在留卡复印件 下载 */
-    imgDownload(url) {
-      const a = document.createElement('a')
-      a.download = name
-      a.href = url
-      a.click()
+    // ********文件下载处理 开始*********************************************************************************
+    /** 下载简历模板操作 劉義民　手動追加*/
+    importTemplate() {
+      importTemplate().then(response => {
+        this.$download.excel(response, '履歴（自分の名前）模板.xls');
+      });
     },
+    /** 员工照片/在留卡复印件/最新履歴 下载 */
+    downloadFile(url, filename) {
+      // 从url中获取文件的扩展名
+      var index = url.lastIndexOf(".");
+      　var extension = url.substr(index);
+      　this.getBlob(url).then(blob => {
+        this.saveAs(blob, filename + extension)
+      })
+    },
+    //通过文件下载url拿到对应的blob对象
+    getBlob(url) {
+      return new Promise(resolve => {
+        const xhr = new XMLHttpRequest()
+        xhr.open('GET', url, true)
+        xhr.responseType = 'blob'
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            resolve(xhr.response)
+          }
+        }
+        xhr.send()
+      })
+    },
+    //下载文件(js模拟点击a标签进行下载)
+    saveAs(blob, filename) {
+      var link = document.createElement('a')
+      link.href = window.URL.createObjectURL(blob)
+      link.download = filename
+      link.click()
+    },
+    // ********文件下载处理 终了*********************************************************************************
     /** 导出按钮操作 */
     handleExport() {
       // 处理查询参数

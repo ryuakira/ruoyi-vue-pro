@@ -29,4 +29,7 @@ public class WorktimePageReqVO extends PageParam {
     @ApiModelProperty(value = "稼働時間")
     private Integer workingtimes;
 
+    @ApiModelProperty(value = "ExcelファイルURL")
+    private String wtFileUrl;
+
 }

@@ -42,6 +42,16 @@
       <el-table-column label="社員名前" align="center" prop="employee.employeeName" />
       <el-table-column label="出勤年月" align="center" prop="workingMonth" width="180"/>
       <el-table-column label="稼働時間" align="center" prop="workingtimes" />
+      <el-table-column label="月度考勤下载" align="center" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+<!--          TODO 因为权限问题，下面代码暂时 CommentOut -->
+<!--      <el-button v-if="scope.row.wtFileUrl != null" size="mini" type="text" icon="el-icon-download" -->
+<!--                     @click="downloadExcelFile(scope.row.wtFileUrl, scope.row.employee.employeeName + '_' + scope.row.workingMonth + '.xls')"-->
+<!--                     v-hasPermi="['system:worktime:updownloadexcel']">{{scope.row.workingMonth}}</el-button>-->
+          <el-button v-if="scope.row.wtFileUrl != null" size="mini" type="text" icon="el-icon-download"
+                     @click="downloadExcelFile(scope.row.wtFileUrl, scope.row.employee.employeeName + '_' + scope.row.workingMonth + '.xls')">{{scope.row.workingMonth}}</el-button>
+        </template>
+      </el-table-column>
       <el-table-column label="新規日付" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -83,7 +93,8 @@
         <el-form-item label="稼働時間" prop="workingtimes">
           <el-input v-model="form.workingtimes" placeholder="请输入稼働時間" />
         </el-form-item>
-        <el-form-item>
+        <el-form-item prop="wtFileUrl">
+          <el-input v-model="form.wtFileUrl" placeholder="点击下面按钮上传当月考勤Excel文件" disabled />
           <el-button type="primary" @click="handleUploadExcel">
             <Icon icon="ep:upload" class="mr-5px" /> 上传本月考勤文件
           </el-button>
@@ -96,9 +107,18 @@
     </el-dialog>
 <!--  上传考勤对话框  -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
-      <el-upload ref="upload" :limit="1" accept=".xlsx, .xls" :headers="upload.headers"
-                 :action="upload.url + '?updateSupport=' + upload.updateSupport" :disabled="upload.isUploading"
-                 :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :auto-upload="false" drag>
+<!--      <el-upload ref="upload" :limit="1" accept=".xlsx, .xls" -->
+<!--                 :headers="upload.headers"-->
+<!--                 :action="upload.url + '?updateSupport=' + upload.updateSupport" -->
+<!--                 :disabled="upload.isUploading"-->
+<!--                 :on-progress="handleFileUploadProgress" -->
+<!--                 :on-success="handleFileSuccess" :auto-upload="false" drag>-->
+      <el-upload ref="upload" :limit="1" accept=".xlsx, .xls" :auto-upload="false" drag
+                   :headers="upload.headers"
+                   :action="upload.url"
+                   :disabled="upload.isUploading"
+                   :on-progress="handleFileUploadProgress"
+                   :on-success="handleFileSuccess">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <div class="el-upload__tip text-center" slot="tip">
@@ -106,7 +126,7 @@
             <el-checkbox v-model="upload.updateSupport" /> 是否更新已经存在的考勤数据
           </div>
           <span>仅允许导入xls、xlsx格式文件。</span>
-          <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
+          <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载考勤模板</el-link>
         </div>
       </el-upload>
       <div slot="footer" class="dialog-footer">
@@ -114,13 +134,18 @@
         <el-button @click="upload.open = false">取 消</el-button>
       </div>
     </el-dialog>
-
-
   </div>
 </template>
 
 <script>
-import { createWorktime, updateWorktime, deleteWorktime, getWorktime, getWorktimePage, exportWorktimeExcel } from "@/api/system/worktime";
+import {
+  createWorktime,
+  updateWorktime,
+  deleteWorktime,
+  getWorktime,
+  getWorktimePage,
+  exportWorktimeExcel,
+} from "@/api/system/worktime";
 import { listSimpleEmployee } from "@/api/system/employee";
 import {importTemplate} from "@/api/system/user";
 import {getBaseHeader} from "@/utils/request";
@@ -158,6 +183,7 @@ export default {
         employeeNum: null,
         workingMonth: null,
         workingtimes: null,
+        wtFileUrl:null,
       },
       // 上传考勤文件（Excel）
       upload: {
@@ -171,8 +197,8 @@ export default {
         updateSupport: 0,
         // 设置上传的请求头部
         headers: getBaseHeader(),
-        // 上传的地址
-        url: process.env.VUE_APP_BASE_API + '/admin-api/system/user/import'
+        // 勤怠ファイルアップロードのActionUrl
+        url: process.env.VUE_APP_BASE_API + '/admin-api/system/worktime/upload-excel'
       },
       // 文件上传到文件服务器上后返回的文件路径
       // returnUrlPath,
@@ -315,40 +341,56 @@ export default {
         this.$download.excel(response, '勤怠（自分の名前）模板.xls');
       });
     },
-    // 文件上传中处理
+    // ********上传Excel文件处理 开始*********************************************************************************
+    /** 处理文件上传中 */
     handleFileUploadProgress(event, file, fileList) {
-      this.upload.isUploading = true;
+      this.upload.isUploading = true; // 禁止修改
     },
-    // 文件上传成功处理
-    handleFileSuccess(response, file, fileList) {
-      if (response.code !== 0) {
-        this.$modal.msgError(response.msg)
-        return;
-      }
-      this.upload.open = false;
-      this.upload.isUploading = false;
-      this.$refs.upload.clearFiles();
-      // 拼接提示语
-      let data = response.data;
-      let text = '创建成功数量：' + data.createUsernames.length;
-      for (const username of data.createUsernames) {
-        text += '<br />&nbsp;&nbsp;&nbsp;&nbsp;' + username;
-      }
-      text += '<br />更新成功数量：' + data.updateUsernames.length;
-      for (const username of data.updateUsernames) {
-        text += '<br />&nbsp;&nbsp;&nbsp;&nbsp;' + username;
-      }
-      text += '<br />更新失败数量：' + Object.keys(data.failureUsernames).length;
-      for (const username in data.failureUsernames) {
-        text += '<br />&nbsp;&nbsp;&nbsp;&nbsp;' + username + '：' + data.failureUsernames[username];
-      }
-      this.$alert(text, "导入结果", { dangerouslyUseHTMLString: true });
-      this.getList();
-    },
-    // 提交上传文件
+    /** 发起文件上传 */
     submitFileForm() {
       this.$refs.upload.submit();
     },
+    /** 文件上传成功处理 */
+    handleFileSuccess(response, file, fileList) {
+      // 清理
+      this.upload.open = false;
+      this.upload.isUploading = false;
+      this.$refs.upload.clearFiles();
+      // 提示成功，并刷新
+      this.$modal.msgSuccess("上传成功");
+      // 上传照片按钮按下时，赋值照片的url
+      this.form.wtFileUrl = response.data;
+      console.log("fileUrl = " + this.form.wtFileUrl);
+
+    },
+    /** 月度考勤 下载 */
+    downloadExcelFile(url, filename) {
+      this.getBlob(url).then(blob => {
+        this.saveAs(blob, filename)
+      })
+    },
+
+    getBlob(url) {
+      return new Promise(resolve => {
+        const xhr = new XMLHttpRequest()
+        xhr.open('GET', url, true)
+        xhr.responseType = 'blob'
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            resolve(xhr.response)
+          }
+        }
+        xhr.send()
+      })
+    },
+
+    saveAs(blob, filename) {
+      var link = document.createElement('a')
+      link.href = window.URL.createObjectURL(blob)
+      link.download = filename
+      link.click()
+    },
+    // ********上传Excel文件处理 终了*********************************************************************************
     /** 导出按钮操作 */
     handleExport() {
       // 处理查询参数

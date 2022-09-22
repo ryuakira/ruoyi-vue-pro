@@ -68,8 +68,7 @@
     "vue-router": "3.4.9",
     "vuedraggable": "2.24.3",
     "vuex": "3.6.0",
-    "xml-js": "1.6.11",
-    "yudao-ui-admin": "/Users/liuyimin/SynologyDrive/02_个人篇/203_工作/2306_テクリアス/Project_RuoyiVuePro/ruoyi-vue-pro/yudao-ui-admin"
+    "xml-js": "1.6.11"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "4.4.6",
