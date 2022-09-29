@@ -1,8 +1,13 @@
 package cn.iocoder.yudao.module.system.controller.admin.employee;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.iocoder.yudao.module.infra.service.file.FileService;
+import cn.iocoder.yudao.module.system.controller.admin.dept.vo.dept.DeptRespVO;
+import cn.iocoder.yudao.module.system.controller.admin.worktime.vo.WorktimeRespVO;
+import cn.iocoder.yudao.module.system.convert.worktime.WorktimeConvert;
 import cn.iocoder.yudao.module.system.dal.dataobject.dept.DeptDO;
+import cn.iocoder.yudao.module.system.dal.dataobject.worktime.WorktimeDO;
 import cn.iocoder.yudao.module.system.service.dept.DeptService;
 import lombok.Data;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +24,8 @@ import java.io.IOException;
 
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
+
+import static cn.hutool.core.collection.CollUtil.isEmpty;
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
@@ -96,7 +103,24 @@ public class EmployeeController {
     @PreAuthorize("@ss.hasPermission('system:employee:query')")
     public CommonResult<PageResult<EmployeeRespVO>> getEmployeePage(@Valid EmployeePageReqVO pageVO) {
         PageResult<EmployeeDO> pageResult = employeeService.getEmployeePage(pageVO);
-        return success(EmployeeConvert.INSTANCE.convertPage(pageResult));
+        // 2022/09/26 劉義民　手動追加　開始
+        // 参照开发文档 https://doc.iocoder.cn/mybatis/#_6-mapper-xml "尽量避免数据库的连表（多表）查询"
+        // 如果从DB员工表取得的员工信息为空，则返回空
+        if (isEmpty(pageResult.getList())) {
+            return success(EmployeeConvert.INSTANCE.convertPage(pageResult)); // 返回空
+        }
+        // 取得部门名称
+        Collection<Long> deptId = convertList(pageResult.getList(), EmployeeDO::getDeptId);
+        Map<Long, DeptDO> deptMap = deptService.getDeptMap(deptId);
+        // 将部门名称放到EmployeeRespVO返回给前台
+        List<EmployeeRespVO> employeeList = new ArrayList<>(pageResult.getList().size());
+        pageResult.getList().forEach(employee -> {
+            EmployeeRespVO respVO = EmployeeConvert.INSTANCE.convert(employee);
+            respVO.setDepartment(EmployeeConvert.INSTANCE.convert(deptMap.get(employee.getDeptId())));
+            employeeList.add(respVO);
+        });
+        // 2022/09/26 劉義民　手動追加　終了
+        return success(new PageResult<EmployeeRespVO>(employeeList, pageResult.getTotal()));
     }
 
     @GetMapping("/export-excel")

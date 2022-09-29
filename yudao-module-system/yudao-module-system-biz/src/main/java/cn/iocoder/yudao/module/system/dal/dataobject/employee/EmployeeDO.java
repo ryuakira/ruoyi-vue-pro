@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.system.dal.dataobject.employee;
 
+import cn.iocoder.yudao.module.system.dal.dataobject.dept.DeptDO;
 import lombok.*;
 import java.util.*;
 import com.baomidou.mybatisplus.annotation.*;
@@ -82,7 +83,9 @@ public class EmployeeDO extends BaseDO {
      */
     private String resume;
     /**
-     * 部門番号
+     * 部門id主鍵
+     *
+     * 关联 {@link DeptDO#getId()}
      */
     private Long deptId;
     /**
@@ -93,5 +96,12 @@ public class EmployeeDO extends BaseDO {
      * 就職状態
      */
     private Integer status;
+
+//    /**
+//     * 部門id主鍵
+//     *
+//     * 关联 {@link DeptDO#getId()}
+//     */
+//    private Long deptId;
 
 }

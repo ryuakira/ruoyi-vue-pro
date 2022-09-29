@@ -15,7 +15,7 @@
       <el-form-item label="性别" prop="sex">
         <el-select v-model="queryParams.sex" placeholder="请选择社員性别" clearable size="small">
           <el-option v-for="dict in this.getDictDatas(DICT_TYPE.SYSTEM_USER_SEX)"
-                     :key="dict.value" :label="dict.label" :value="dict.value"/>
+                     :key="dict.value" :label="dict.label" :value="parseInt(dict.value)"/>
         </el-select>
       </el-form-item>
       <el-form-item label="生年月日" prop="birthday">
@@ -36,11 +36,12 @@
       <el-form-item label="郵便番号" prop="postcode">
         <el-input v-model="queryParams.postcode" placeholder="请输入郵便番号" clearable @keyup.enter.native="handleQuery"/>
       </el-form-item>
-      <el-form-item label="住所" prop="address">
-        <el-input v-model="queryParams.address" placeholder="请输入住所" clearable @keyup.enter.native="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="部門番号" prop="deptId">
-        <el-input v-model="queryParams.deptId" placeholder="请输入部門番号" clearable @keyup.enter.native="handleQuery"/>
+<!--      <el-form-item label="住所" prop="address">-->
+<!--        <el-input v-model="queryParams.address" placeholder="请输入住所" clearable @keyup.enter.native="handleQuery"/>-->
+<!--      </el-form-item>-->
+      <el-form-item label="所属部门" prop="deptId" >
+        <treeselect v-model="queryParams.deptId" :options="deptOptions" :show-count="true" :clearable="true"
+                    placeholder="请选择所属部门" :normalizer="normalizer"/>
       </el-form-item>
       <el-form-item label="入社日">
         <el-date-picker v-model="dateRangeHireDate" style="width: 240px"
@@ -49,7 +50,7 @@
       <el-form-item label="就職状態" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择就職状態" clearable size="small">
             <el-option v-for="dict in this.getDictDatas(DICT_TYPE.SYSTEM_EMPLOYEE_STATUS)"
-                       :key="dict.value" :label="dict.label" :value="dict.value"/>
+                       :key="dict.value" :label="dict.label" :value="parseInt(dict.value)"/>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -77,12 +78,15 @@
       <el-table-column label="社員番号" align="center" prop="employeeNum" />
       <el-table-column label="姓名" align="center" prop="employeeName" />
       <el-table-column label="姓名カナ" align="center" prop="employeeNameKana" width="100"/>
-      <el-table-column label="性别" align="center" prop="sex" width="60"/>
+      <el-table-column label="性别" align="center" prop="sex" width="60">
+        <template slot-scope="scope">
+        <dict-tag :type="DICT_TYPE.SYSTEM_USER_SEX" :value="scope.row.sex" />
+        </template>
+      </el-table-column>
       <el-table-column label="生年月日" align="center" prop="birthday" :formatter="dateFormat" width="100" >
       </el-table-column>
       <el-table-column label="在留カード番号" align="center" prop="resideceCardId" />
-      <el-table-column label="MyNumberNo." align="center" prop="mynumberCardId" width="120"/>
-      <el-table-column label="证件下载" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="证件下载" align="center" class-name="small-padding fixed-width" >
         <template slot-scope="scope">
           <!--   TODO 暂时忽略权限问题 v-hasPermi="['system:employee:updownload']" -->
           <el-button v-if="scope.row.avatar != null" size="mini" type="text" icon="el-icon-download"
@@ -95,7 +99,7 @@
       <el-table-column label="携帯番号" align="center" prop="mobile" />
       <el-table-column label="郵便番号" align="center" prop="postcode" />
       <el-table-column label="住所" align="center" prop="address" />
-      <el-table-column label="最新履歴下载" align="center" prop="resume" >
+      <el-table-column label="最新履歴下载" align="center" prop="resume" width="120">
         <template slot-scope="scope">
           <!--   TODO 暂时忽略权限问题 v-hasPermi="['system:employee:updownload']" -->
           <el-button v-if="scope.row.resume != null" size="mini" type="text" icon="el-icon-download"
@@ -107,12 +111,11 @@
                    v-hasPermi="['system:employee:update']">勤怠詳細
         </el-button>
       </el-table-column>
-      <el-table-column label="所属部門" align="center" prop="deptId" />
+      <el-table-column label="所属部門" align="center" prop="department.name" />
       <el-table-column label="入社日"  :formatter="dateFormat" align="center" prop="hireDate" width="100"/>
-      <el-table-column label="就職状態" align="center" prop="status" width="80"/>
-      <el-table-column label="新規日付" align="center" prop="createTime" width="180">
+      <el-table-column label="就職状態" align="center" prop="status" width="80">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
+          <dict-tag :type="DICT_TYPE.SYSTEM_EMPLOYEE_STATUS" :value="scope.row.status" />
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -121,6 +124,11 @@
                      v-hasPermi="['system:employee:update']">修改</el-button>
           <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
                      v-hasPermi="['system:employee:delete']">删除</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="新規日付" align="center" prop="createTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -155,7 +163,7 @@
               </el-select>
             </el-form-item>å
             <el-form-item label="生年月日" prop="birthday">
-              <el-date-picker clearable v-model="form.birthday" type="date"  placeholder="选择年月日" value-format="yyyy-MM-dd" />
+              <el-date-picker clearable v-model="form.birthday" type="date"  placeholder="选择年月日" />
             </el-form-item>
             <el-form-item label="携帯番号" prop="mobile">
               <el-input v-model="form.mobile" placeholder="请输入携帯番号" />
@@ -175,9 +183,8 @@
             <el-form-item label="在留カードコピー" prop="resideceCardCopy">
               <el-image v-if="form.resideceCardCopy != null" :src="form.resideceCardCopy" />
               <el-button type="primary" @click="handleUpload(2)">上传在留卡复印件</el-button>
-              <el-input v-model="form.resideceCardCopy" placeholder="点击下面按钮上传在留卡复印件"/>
+              <el-input v-model="form.resideceCardCopy" placeholder="点击下面按钮上传在留卡复印件" type="hidden"/>
             </el-form-item>
-
             <el-form-item label="マイナンバーカード番号" prop="mynumberCardId">
               <el-input v-model="form.mynumberCardId" placeholder="请输入マイナンバーカード番号" />
             </el-form-item>
@@ -193,12 +200,12 @@
                           placeholder="请选择所属部门" :normalizer="normalizer"/>
             </el-form-item>
             <el-form-item label="入社日" prop="hireDate">
-              <el-date-picker clearable v-model="form.hireDate" type="date"  placeholder="选择入社日" />
+              <el-date-picker clearable v-model="form.hireDate" type="date"  placeholder="选择入社日"/>
             </el-form-item>
             <el-form-item label="就職状態" prop="status">
               <el-select v-model="form.status" placeholder="请选择就職状態">
                 <el-option v-for="dict in this.getDictDatas(DICT_TYPE.SYSTEM_EMPLOYEE_STATUS)"
-                           :key="dict.value" :label="dict.label" :value="dict.value"/>
+                           :key="dict.value" :label="dict.label" :value="parseInt(dict.value)"/>
               </el-select>
             </el-form-item>
           </el-tab-pane>
@@ -260,6 +267,7 @@ import {
   getEmployee,
   getEmployeePage,
   exportEmployeeExcel,
+  ENUM_BUTTON_FLG,
 } from "@/api/system/employee";
 import {listSimpleDepts} from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
@@ -267,6 +275,7 @@ import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import moment from "moment";
 import {getAccessToken} from "@/utils/auth";
 import {importTemplate} from "@/api/system/user";
+// import {getDictDatas, getDictDataLabel} from "@/api//src/utils/dict"
 export default {
   name: "Employee",
   components: { Treeselect
@@ -493,11 +502,11 @@ export default {
       // 提示成功，并刷新
       // this.$modal.msgSuccess("上传成功");
       // 上传照片按钮按下时，赋值照片的url
-      if (this.uploadFlg == 1) this.form.avatar = response.data;
+      if (this.uploadFlg == ENUM_BUTTON_FLG.PHOTO_BUTTON) this.form.avatar = response.data;
       // 上传在留卡复印件按钮按下时，赋值在留卡复印件的url
-      if (this.uploadFlg == 2) this.form.resideceCardCopy = response.data;
+      if (this.uploadFlg == ENUM_BUTTON_FLG.IDENTITY_BUTTON) this.form.resideceCardCopy = response.data;
       // 上传在留卡复印件按钮按下时，赋值在留卡复印件的url
-      if (this.uploadFlg == 3) this.form.resume = response.data;
+      if (this.uploadFlg == ENUM_BUTTON_FLG.RESUME_BUTTON) this.form.resume = response.data;
     },
     // ********文件上传处理 终了*********************************************************************************
     /** 提交按钮 */
@@ -566,7 +575,7 @@ export default {
     },
     //下载文件(js模拟点击a标签进行下载)
     saveAs(blob, filename) {
-      var link = document.createElement('a')
+      let link = document.createElement('a')
       link.href = window.URL.createObjectURL(blob)
       link.download = filename
       link.click()

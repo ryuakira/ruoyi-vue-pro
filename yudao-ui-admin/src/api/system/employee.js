@@ -60,3 +60,10 @@ export function listSimpleEmployee() {
     method: 'get'
   })
 }
+
+// 定义员工管理上传文件按钮的枚举值
+export const ENUM_BUTTON_FLG = {
+  PHOTO_BUTTON: 1, // 上传照片按钮的Flg值
+  IDENTITY_BUTTON: 2, // 上传在留卡复印件按钮的Flg值
+  RESUME_BUTTON: 3 // 上传最新简历按钮的Flg值
+}
