@@ -22,8 +22,8 @@ public interface WorktimeMapper extends BaseMapperX<WorktimeDO> {
                 .eqIfPresent(WorktimeDO::getEmployeeNum, reqVO.getEmployeeNum())
                 .betweenIfPresent(WorktimeDO::getWorkingMonth, reqVO.getBeginWorkingMonth(), reqVO.getEndWorkingMonth())
                 .eqIfPresent(WorktimeDO::getWorkingMonth, reqVO.getWorkingMonth())
-                .orderByDesc(WorktimeDO::getId)
-                .orderByDesc(WorktimeDO::getWorkingMonth));
+                .orderByDesc(WorktimeDO::getWorkingMonth)
+                .orderByDesc(WorktimeDO::getId));
     }
 
     default List<WorktimeDO> selectList(WorktimeExportReqVO reqVO) {
@@ -31,6 +31,7 @@ public interface WorktimeMapper extends BaseMapperX<WorktimeDO> {
                 .eqIfPresent(WorktimeDO::getEmployeeNum, reqVO.getEmployeeNum())
                 .betweenIfPresent(WorktimeDO::getWorkingMonth, reqVO.getBeginWorkingMonth(), reqVO.getEndWorkingMonth())
                 .eqIfPresent(WorktimeDO::getWorkingMonth, reqVO.getWorkingMonth())
+                .orderByDesc(WorktimeDO::getWorkingMonth)
                 .orderByDesc(WorktimeDO::getId));
     }
 }

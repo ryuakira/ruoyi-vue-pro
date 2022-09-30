@@ -67,3 +67,11 @@ export const ENUM_BUTTON_FLG = {
   IDENTITY_BUTTON: 2, // 上传在留卡复印件按钮的Flg值
   RESUME_BUTTON: 3 // 上传最新简历按钮的Flg值
 }
+
+// 下载简历模板
+export function downLoadTemplate() {
+// // 简历模版的url（local dev）
+//   return 'http://127.0.0.1:48080/admin-api/infra/file/5/get/a34cd85b967ef91bb4510241f8a8574b04584f9baeecc103fe520e748d2c6792.xls';
+// 简历模版的url（七云牛 11号 dev）
+  return 'http://test.yudao.iocoder.cn/28115ad1a77b339c0e4735c0b5d91ea191f9a35667fd2061bb5f09bdcf2b3bb7.xls';
+}

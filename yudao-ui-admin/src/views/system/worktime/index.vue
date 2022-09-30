@@ -41,7 +41,19 @@
       <el-table-column label="社員番号" align="center" prop="employeeNum" width="180"/>
       <el-table-column label="社員名前" align="center" prop="employee.employeeName" width="180"/>
       <el-table-column label="出勤年月" align="center" prop="workingMonth" width="180"/>
-      <el-table-column label="稼働時間(单位：H)" align="center" prop="workingtimes" width="180"/>
+      <el-table-column label="稼働時間(单位：H)" align="center" prop="workingtimes" width="180">
+        <template slot-scope="scope">
+          <span v-if="scope.row.workingtimes >= 140 && scope.row.workingtimes <= 200" style="color:green">{{scope.row.workingtimes}}</span>
+          <span v-else-if="scope.row.workingtimes > 200" style="color:blue">{{scope.row.workingtimes}}</span>
+          <span v-else style="color:red">{{scope.row.workingtimes}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="满勤基准(单位：H)" align="center" prop="" width="180">
+          140
+      </el-table-column>
+      <el-table-column label="加班基准(单位：H)" align="center" prop="" width="180">
+        200
+      </el-table-column>
       <el-table-column label="月度考勤下载" align="center" width="180" class-name="small-padding fixed-width">
         <template slot-scope="scope">
 <!--          TODO 因为权限问题，下面代码暂时 CommentOut -->
@@ -131,7 +143,7 @@
             <el-checkbox v-model="upload.updateSupport" /> 是否更新已经存在的考勤数据
           </div>
           <span>仅允许导入xls、xlsx格式文件。</span>
-          <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载考勤模板</el-link>
+          <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="downLoadTemplate">下载考勤模板</el-link>
         </div>
       </el-upload>
       <div slot="footer" class="dialog-footer">
@@ -150,6 +162,7 @@ import {
   getWorktime,
   getWorktimePage,
   exportWorktimeExcel,
+  downLoadTemplate,
 } from "@/api/system/worktime";
 import { listSimpleEmployee } from "@/api/system/employee";
 import {importTemplate} from "@/api/system/user";
@@ -336,10 +349,9 @@ export default {
       this.upload.open = true;
     },
     /** 下载考勤模板操作 劉義民　手動追加*/
-    importTemplate() {
-      importTemplate().then(response => {
-        this.$download.excel(response, '勤怠（自分の名前）模板.xls');
-      });
+    downLoadTemplate() {
+      let url = downLoadTemplate();
+      this.downloadExcelFile(url, '作業報告書日報 yyyyMM_名前.xls');
     },
     // ********上传下载Excel文件处理 开始*********************************************************************************
     /** 处理文件上传中 */

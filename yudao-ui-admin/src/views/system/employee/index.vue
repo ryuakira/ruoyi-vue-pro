@@ -248,7 +248,7 @@
             <el-checkbox v-model="upload.updateSupport" /> 是否更新已经存在的考勤数据
           </div>
           <span>仅允许导入xls、xlsx格式文件。</span>
-          <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载简历模板</el-link>
+          <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="downLoadTemplate">下载简历模板</el-link>
         </div>
       </el-upload>
       <div slot="footer" class="dialog-footer">
@@ -267,6 +267,7 @@ import {
   getEmployee,
   getEmployeePage,
   exportEmployeeExcel,
+  downLoadTemplate,
   ENUM_BUTTON_FLG,
 } from "@/api/system/employee";
 import {listSimpleDepts} from "@/api/system/dept";
@@ -274,7 +275,6 @@ import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import moment from "moment";
 import {getAccessToken} from "@/utils/auth";
-import {importTemplate} from "@/api/system/user";
 // import {getDictDatas, getDictDataLabel} from "@/api//src/utils/dict"
 export default {
   name: "Employee",
@@ -545,16 +545,16 @@ export default {
     },
     // ********文件下载处理 开始*********************************************************************************
     /** 下载简历模板操作 劉義民　手動追加*/
-    importTemplate() {
-      importTemplate().then(response => {
-        this.$download.excel(response, '履歴（自分の名前）模板.xls');
-      });
+    downLoadTemplate() {
+      let url = downLoadTemplate();
+      console.log("file url is :" + url);
+      this.downloadFile(url,'名前_履歴_yyyyMMdd.xls');
     },
     /** 员工照片/在留卡复印件/最新履歴 下载 */
     downloadFile(url, filename) {
       // 从url中获取文件的扩展名
-      var index = url.lastIndexOf(".");
-      　var extension = url.substr(index);
+      let index = url.lastIndexOf(".");
+      let extension = url.substr(index);
       　this.getBlob(url).then(blob => {
         this.saveAs(blob, filename + extension)
       })
